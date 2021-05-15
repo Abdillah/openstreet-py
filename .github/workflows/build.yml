@@ -20,10 +20,10 @@ jobs:
         python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
     - name: Build and package
-      run:
-        - pip install -U setuptools wheel setuptools-rust
-        - python setup.py bdist_wheel
-        - for whl in dist/*.whl; do auditwheel repair "$whl" -w dist/; done
+      run: |
+        pip install -U setuptools wheel setuptools-rust
+        python setup.py bdist_wheel
+        for whl in dist/*.whl; do auditwheel repair "$whl" -w dist/; done
     - uses: actions/upload-artifact@v2
       with:
         name: nightly-$GITHUB_SHA
