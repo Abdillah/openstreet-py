@@ -1,0 +1,25 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Rust
+      uses: ATiltedTree/setup-rust@v1.0.4
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+    - name: Build and package
+      run: python setup.py bdist
+    - uses: actions/upload-artifact@v2
+      with:
+        name: nightly-$GITHUB_SHA
+        path: $GITHUB_WORKSPACE/dist/openstreet-*.tar.gz

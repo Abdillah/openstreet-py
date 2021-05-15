@@ -1,0 +1,5 @@
+/dist/
+/build/
+/openstreet.egg-info/
+/target/
+__pycache__
