@@ -12,6 +12,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Setup Rust
       uses: ATiltedTree/setup-rust@v1.0.4
+      with:
+        rust-version: 'stable'
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
