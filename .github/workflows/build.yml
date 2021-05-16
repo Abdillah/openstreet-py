@@ -23,9 +23,3 @@ jobs:
       run: pip install -U setuptools wheel setuptools-rust
     - name: Build and package
       run: python setup.py bdist_wheel
-    - name: See artifacts
-      run: ls ${{ github.workspace }}/dist/
-    - uses: actions/upload-artifact@v2
-      with:
-        name: nightly-${{ github.sha }}
-        path: dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl

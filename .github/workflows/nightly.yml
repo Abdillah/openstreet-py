@@ -1,0 +1,53 @@
+name: nightly
+
+on:
+  push:
+    tags:
+      - 'nightly*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Rust
+      uses: ATiltedTree/setup-rust@v1.0.4
+      with:
+        rust-version: 'stable'
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+    - name: Install Python dependency
+      run: pip install -U setuptools wheel setuptools-rust
+    - name: Build and package
+      run: python setup.py bdist_wheel
+    - name: See artifacts
+      run: ls ${{env.GITHUB_WORKSPACE}}/dist/
+    - uses: actions/upload-artifact@v2
+      with:
+        name: nightly-${{env.GITHUB_SHA}}
+        path: dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
+    - name: Set tag
+      run: echo "CURRENT_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - name: release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: false
+        release_name: ${{ steps.version.outputs.version }}
+        tag_name: ${{ env.CURRENT_TAG }}
+        body_path: "Release "${{ env.CURRENT_TAG }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload whl artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
+        asset_name: openstreet-v${{ env.CURRENT_TAG }}.whl
+        asset_content_type: application/gzip
