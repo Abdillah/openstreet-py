@@ -23,6 +23,8 @@ jobs:
       run: pip install -U setuptools wheel setuptools-rust
     - name: Build and package
       run: python setup.py bdist_wheel
+    - name: See artifacts
+      run: python setup.py bdist_wheel; pwd; ls dist/; ls $GITHUB_WORKSPACE/dist/
     - uses: actions/upload-artifact@v2
       with:
         name: nightly-$GITHUB_SHA
