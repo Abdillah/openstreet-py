@@ -27,23 +27,11 @@ jobs:
       run: ls ${{ github.workspace }}/dist/
     - name: Set tag
       run: echo "CURRENT_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-    - name: release
-      uses: actions/create-release@v1
-      id: create_release
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        draft: false
-        prerelease: false
-        release_name: ${{ steps.version.outputs.version }}
-        tag_name: ${{ env.CURRENT_TAG }}
-        body: "Release ${{ env.CURRENT_TAG }}"
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-    - name: Upload whl artifact
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
-        asset_name: openstreet-v${{ env.CURRENT_TAG }}.whl
-        asset_content_type: application/gzip
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Nightly build ${{ env.CURRENT_TAG }}"
+        files: |
+          dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
