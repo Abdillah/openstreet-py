@@ -39,7 +39,7 @@ jobs:
         prerelease: false
         release_name: ${{ steps.version.outputs.version }}
         tag_name: ${{ env.CURRENT_TAG }}
-        body_path: "Release "${{ env.CURRENT_TAG }}
+        body: "Release ${{ env.CURRENT_TAG }}"
       env:
         GITHUB_TOKEN: ${{ github.token }}
     - name: Upload whl artifact
