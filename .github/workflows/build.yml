@@ -24,8 +24,8 @@ jobs:
     - name: Build and package
       run: python setup.py bdist_wheel
     - name: See artifacts
-      run: ls ${{env.GITHUB_WORKSPACE}}/dist/
+      run: ls ${{ github.workspace }}/dist/
     - uses: actions/upload-artifact@v2
       with:
-        name: nightly-${{env.GITHUB_SHA}}
+        name: nightly-${{ github.sha }}
         path: dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
