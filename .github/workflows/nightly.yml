@@ -6,7 +6,7 @@ on:
       - 'nightly*'
 
 jobs:
-  build:
+  nightly-release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -30,8 +30,7 @@ jobs:
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
         prerelease: true
         title: "Nightly build ${{ env.CURRENT_TAG }}"
         files: |
-          dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
+          dist/openstreet-0.1-*-linux_x86_64.whl
