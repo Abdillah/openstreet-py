@@ -17,15 +17,15 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        python-version: '3.8' # Version range or exact version of a Python version to use, using SemVer's version range syntax
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
     - name: Install Python dependency
       run: pip install -U setuptools wheel setuptools-rust
     - name: Build and package
       run: python setup.py bdist_wheel
     - name: See artifacts
-      run: python setup.py bdist_wheel; pwd; ls dist/; ls $GITHUB_WORKSPACE/dist/
+      run: ls $GITHUB_WORKSPACE/dist/
     - uses: actions/upload-artifact@v2
       with:
         name: nightly-$GITHUB_SHA
-        path: $GITHUB_WORKSPACE/dist/openstreet-*.whl
+        path: $GITHUB_WORKSPACE/dist/openstreet-0.1-cp39-cp39-linux_x86_64.whl
