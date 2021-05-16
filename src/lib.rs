@@ -9,17 +9,22 @@ use pyo3::wrap_pyfunction;
 
 mod query;
 
+use query::BuilderGet;
+
 #[pyclass]
+/// OpenStreet Map object
 struct Node {
     inner: osm::Node
 }
 
 #[pyclass]
+/// OpenStreet Way object
 struct Way {
     inner: osm::Way
 }
 
 #[pyclass]
+/// Object that save filtering operations
 struct WayQueryBuilder {
     _qb: query::Builder<osm::Way>,
 }
@@ -33,14 +38,19 @@ impl WayQueryBuilder {
 
 #[pymethods]
 impl WayQueryBuilder {
+    /// Return Node with given ``id``
     pub fn by_id(&self, id: osm::Id) -> Way {
         Way { inner: self._qb.by_id(id).clone() }
     }
 
+    /// Filter Way with tag of key ``key`` that contains one of ``values``
+    ///
+    /// See :py:class:`Map` documentation for usage example.
     pub fn by_tag_in(&self, key: &str, values: Vec<&str>) -> WayQueryBuilder {
         WayQueryBuilder { _qb: self._qb.clone().by_tag_in(key, values) }
     }
 
+    /// Return the filtered Way list
     pub fn get(&self) -> Vec<Way> {
         self._qb.get().iter_mut()
         .map(|w| Way { inner: w.clone() })
@@ -49,6 +59,7 @@ impl WayQueryBuilder {
 }
 
 #[pyclass]
+/// Object that save filtering operations
 struct NodeQueryBuilder {
     _qb: query::Builder<osm::Node>,
 }
@@ -59,18 +70,21 @@ impl NodeQueryBuilder {
     }
 }
 
-use query::BuilderGet;
-
 #[pymethods]
 impl NodeQueryBuilder {
+    /// Return Node with given ``id``
     pub fn by_id(&self, id: osm::Id) -> Node {
         Node { inner: self._qb.by_id(id).clone() }
     }
 
+    /// Filter Node with tag of key ``key`` that contains one of ``values``
+    ///
+    /// See :py:class:`Map` documentation for usage example.
     pub fn by_tag_in(&self, key: &str, values: Vec<&str>) -> NodeQueryBuilder {
         NodeQueryBuilder { _qb: self._qb.clone().by_tag_in(key, values) }
     }
 
+    /// Return the filtered Node list
     pub fn get(&self) -> Vec<Node> {
         self._qb.get().iter_mut()
         .map(|n| Node { inner: n.clone() })
@@ -80,6 +94,18 @@ impl NodeQueryBuilder {
 
 
 #[pyclass]
+/// Map provide parsing and storage for OSM format
+///
+/// Map contains three main information: nodes, ways, and bounds.
+/// For ways and nodes, both must be accessed using query style
+/// or fluent interface.
+///
+/// .. code-block:: python
+///    :linenos:
+///
+///    map = Map()
+///    streets = map.ways().by_tag_in("highstreet", [ "primary", "secondary" ]).get()
+///
 struct Map {
     inner: osm::OSM,
 }
@@ -93,10 +119,20 @@ impl Map {
         Map { inner: doc }
     }
 
+    /// Return query builder to filter ways collection
+    ///
+    /// Refer to WayQueryBuilder methods for available filters.
+    /// Call :py:func:`WayQueryBuilder.get` when done to retrieve the result.
+    /// See :py:class:`Map` documentation for example.
     pub fn ways(&self) -> WayQueryBuilder {
         WayQueryBuilder::new(&self.inner.ways)
     }
 
+    /// Return query builder to filter ways collection
+    ///
+    /// Refer to NodeQueryBuilder methods for available filters.
+    /// Call :py:func:`NodeQueryBuilder.get` when done to retrieve the result.
+    /// See :py:class:`Map` documentation for example.
     pub fn nodes(&self) -> NodeQueryBuilder {
         NodeQueryBuilder::new(&self.inner.nodes)
     }
@@ -110,6 +146,8 @@ fn _binding(py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<Map>()?;
     m.add_class::<Node>()?;
     m.add_class::<Way>()?;
+    m.add_class::<NodeQueryBuilder>()?;
+    m.add_class::<WayQueryBuilder>()?;
     Ok(())
 }
 
