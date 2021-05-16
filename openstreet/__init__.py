@@ -1,1 +1,1 @@
-from .openstreet import *
+from ._binding import *

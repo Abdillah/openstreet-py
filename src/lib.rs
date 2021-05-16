@@ -103,7 +103,9 @@ impl Map {
 }
 
 #[pymodule]
-fn openstreet(py: Python, m: &PyModule) -> PyResult<()> {
+fn _binding(py: Python, m: &PyModule) -> PyResult<()> {
+    m.add("__name__", "openstreet");
+    m.add("__package__", "openstreet");
     m.add("__doc__", "OpenStreet map with advanced graph functionality built in.")?;
     m.add_class::<Map>()?;
     m.add_class::<Node>()?;
