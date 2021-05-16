@@ -28,4 +28,4 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: nightly-$GITHUB_SHA
-        path: $GITHUB_WORKSPACE/dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
+        path: dist/openstreet-0.1-cp38-cp38-linux_x86_64.whl
