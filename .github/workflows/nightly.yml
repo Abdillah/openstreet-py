@@ -33,7 +33,7 @@ jobs:
         prerelease: true
         title: "Nightly build ${{ env.CURRENT_TAG }}"
         files: |
-          dist/openstreet-0.1-*-linux_x86_64.whl
+          dist/openstreet-*-*-linux_x86_64.whl
     - name: Build sphinx
       uses: ammaraskar/sphinx-action@master
       with:
