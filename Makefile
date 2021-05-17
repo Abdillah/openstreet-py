@@ -21,7 +21,7 @@ build:
 	python setup.py bdist
 
 autodoc:
-	@${SPHINXAPIDOC} --force -H "OpenStreet Module API" --module-first --no-headings -o ${SOURCEDIR} build/lib
+	@${SPHINXAPIDOC} --force -H "Reference and API" --module-first --no-headings --implicit-namespaces -o ${SOURCEDIR} build/lib/openstreet
 
 doc: clean build html
 

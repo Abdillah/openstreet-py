@@ -34,3 +34,15 @@ jobs:
         title: "Nightly build ${{ env.CURRENT_TAG }}"
         files: |
           dist/openstreet-0.1-*-linux_x86_64.whl
+    - name: Build sphinx
+      uses: ammaraskar/sphinx-action@master
+      with:
+        docs-folder: "doc/"
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v2
+      with:
+        target_branch: gh-pages
+        build_dir: build/doc/html
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
