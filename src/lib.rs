@@ -24,6 +24,23 @@ struct Way {
 }
 
 #[pyclass]
+/// OpenStreet Bounds object
+struct Bounds {
+    #[pyo3(get)]
+    /// Min latitude
+    pub minlat: f64,
+    #[pyo3(get)]
+    /// Min longitude
+    pub minlon: f64,
+    #[pyo3(get)]
+    /// Max latitude
+    pub maxlat: f64,
+    #[pyo3(get)]
+    /// Max longitude
+    pub maxlon: f64,
+}
+
+#[pyclass]
 /// Object that save filtering operations
 struct WayQueryBuilder {
     _qb: query::Builder<osm::Way>,
@@ -136,16 +153,31 @@ impl Map {
     pub fn nodes(&self) -> NodeQueryBuilder {
         NodeQueryBuilder::new(&self.inner.nodes)
     }
+
+    /// Return bounds of map
+    pub fn bounds(&self) -> Option<Bounds> {
+        if let Some(bounds) = self.inner.bounds {
+            Some(Bounds {
+                minlat: bounds.minlat,
+                minlon: bounds.minlon,
+                maxlat: bounds.maxlat,
+                maxlon: bounds.maxlon,
+            })
+        } else {
+            None
+        }
+    }
 }
 
 #[pymodule]
 fn _binding(py: Python, m: &PyModule) -> PyResult<()> {
-    m.add("__name__", "openstreet");
-    m.add("__package__", "openstreet");
+    m.add("__name__", "openstreet")?;
+    m.add("__package__", "openstreet")?;
     m.add("__doc__", "OpenStreet map with advanced graph functionality built in.")?;
     m.add_class::<Map>()?;
     m.add_class::<Node>()?;
     m.add_class::<Way>()?;
+    m.add_class::<Bounds>()?;
     m.add_class::<NodeQueryBuilder>()?;
     m.add_class::<WayQueryBuilder>()?;
     Ok(())
