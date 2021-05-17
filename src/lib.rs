@@ -8,7 +8,7 @@ use pyo3::prelude::*;
 
 mod query;
 
-use query::TBuilder;
+use query::QueryBuilder;
 
 #[pyclass]
 /// OpenStreet Map object
