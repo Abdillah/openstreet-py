@@ -3,7 +3,7 @@ name: nightly
 on:
   push:
     tags:
-      - 'nightly*'
+      - 'v*-nightly.*'
 
 jobs:
   nightly-release:
