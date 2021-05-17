@@ -4,12 +4,11 @@ extern crate fnv;
 use std::fs::File;
 
 use pyo3::prelude::*;
-use pyo3::types::PyList;
-use pyo3::wrap_pyfunction;
+// use pyo3::wrap_pyfunction;
 
 mod query;
 
-use query::BuilderGet;
+use query::TBuilder;
 
 #[pyclass]
 /// OpenStreet Map object

@@ -1,9 +1,5 @@
-use fnv;
-use osm_xml as osm;
-use std::rc::Rc;
-
 #[derive(Clone, PartialEq)]
-enum FilterQuery {
+pub(crate) enum FilterQuery {
     // Non-lazy filter already O(1)
     // ById(i64),
     ByTag(String, Vec<String>),
@@ -50,15 +46,34 @@ impl Filter<&osm::Way> for FilterQuery {
     }
 }
 
+pub(crate) trait QueryBuilder<T> {
+    fn append_filter(&mut self, f: FilterQuery);
+
+    fn by_tag_eq(mut self, key: &str, value: &str) -> Self where Self: Sized {
+        self.append_filter(FilterQuery::ByTag(key.to_string(), vec![ value.to_string() ]));
+        self
+    }
+
+    fn by_tag_in(mut self, key: &str, values: Vec<&str>) -> Self where Self: Sized {
+        let values = values.iter().map(|s| s.to_string()).collect::<Vec<String>>();
+        self.append_filter(FilterQuery::ByTag(key.to_string(), values));
+        self
+    }
+
+    fn has_tag(mut self, key: &str) -> Self where Self: Sized {
+        unimplemented!()
+    }
+
+    fn get(&self) -> Vec<&T>;
+
+    fn by_id(&self, id: i64) -> &T;
+}
+
 
 #[derive(Clone)]
 pub(crate) struct Builder<T> {
     storage: std::sync::Arc<fnv::FnvHashMap<osm::Id, T>>,
-    conditions: Vec<FilterQuery>
-}
-
-pub trait BuilderGet<T> {
-    fn get(&self) -> Vec<&T>;
+    conditions: Vec<FilterQuery>,
 }
 
 impl<T> Builder<T> {
@@ -72,40 +87,40 @@ impl<T> Builder<T> {
     fn filters(&self) -> Vec<FilterQuery> {
         self.conditions.clone()
     }
+}
 
-    pub fn by_tag_eq(mut self, key: &str, value: &str) -> Self {
-        self.conditions.push(FilterQuery::ByTag(key.to_string(), vec![ value.to_string() ]));
-        self
-    }
+impl<T> Iterator for Builder<T> {
+    type Item = T;
 
-    pub fn by_tag_in(mut self, key: &str, values: Vec<&str>) -> Self {
-        let values = values.iter().map(|s| s.to_string()).collect::<Vec<String>>();
-        self.conditions.push(FilterQuery::ByTag(key.to_string(), values));
-        self
-    }
-
-    pub fn has_tag(mut self, key: &str) -> Self {
+    fn next(&mut self) -> Option<Self::Item> {
+        self.storage.iter();
         unimplemented!()
-    }
-
-    pub fn by_id(&self, id: i64) -> &T {
-        self.storage.get(&id)
-        .expect(format!("No data with id {} found", id).as_str())
     }
 }
 
 impl Builder<osm::Way> {
+    pub fn contain_nodes(mut self, node_ids: Vec<i64>) -> Self {
+        self.conditions.push(FilterQuery::HasNodes(node_ids));
+        self
+    }
+
     pub fn is_poly(mut self) -> Self {
         self.conditions.push(FilterQuery::IsPolygon);
         self
     }
 }
 
-trait BuilerGet<T> {
-    fn get(&self) -> Vec<&T>;
-}
 
-impl BuilderGet<osm::Way> for Builder<osm::Way> {
+impl QueryBuilder<osm::Way> for Builder<osm::Way> {
+    fn append_filter(&mut self, f: FilterQuery) {
+        self.conditions.push(f);
+    }
+
+    fn by_id(&self, id: i64) -> &osm::Way {
+        self.storage.get(&id)
+        .expect(format!("No data with id {} found", id).as_str())
+    }
+
     fn get(&self) -> Vec<&osm::Way> {
         let mut r: Vec<&osm::Way> = vec![];
         for (k, v) in self.storage.iter() {
@@ -119,7 +134,16 @@ impl BuilderGet<osm::Way> for Builder<osm::Way> {
     }
 }
 
-impl BuilderGet<osm::Node> for Builder<osm::Node> {
+impl QueryBuilder<osm::Node> for Builder<osm::Node> {
+    fn append_filter(&mut self, f: FilterQuery) {
+        self.conditions.push(f);
+    }
+
+    fn by_id(&self, id: i64) -> &osm::Node {
+        self.storage.get(&id)
+        .expect(format!("No data with id {} found", id).as_str())
+    }
+
     fn get(&self) -> Vec<&osm::Node> {
         let mut r: Vec<&osm::Node> = vec![];
         for (k, v) in self.storage.iter() {
