@@ -37,7 +37,7 @@ jobs:
     - name: Build sphinx
       uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: "pwd; ls .;"
+        pre-build-command: "pip install -U readthedocs-sphinx-ext sphinx_rtd_theme"
         docs-folder: "./"
     - name: Deploy to GitHub Pages
       if: success()
