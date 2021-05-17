@@ -1,5 +1,5 @@
-OpenStreet Module API
-=====================
+Reference and API
+=================
 
 .. toctree::
    :maxdepth: 4
