@@ -37,9 +37,8 @@ jobs:
     - name: Build sphinx
       uses: ammaraskar/sphinx-action@master
       with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
         pre-build-command: "pwd; ls .;"
-        docs-folder: "doc/"
+        docs-folder: "./"
     - name: Deploy to GitHub Pages
       if: success()
       uses: crazy-max/ghaction-github-pages@v2
