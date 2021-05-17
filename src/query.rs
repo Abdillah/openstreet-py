@@ -7,6 +7,7 @@ pub(crate) enum FilterQuery {
     // Node only:
     // Way only:
     IsPolygon,
+    HasNodes(Vec<osm::Id>),
 }
 
 trait Filter<T> {
@@ -41,6 +42,17 @@ impl Filter<&osm::Way> for FilterQuery {
                 return true;
             },
             Self::IsPolygon => item.is_polygon(),
+            Self::HasNodes(node_ids) => {
+                // TODO: We will create faster index later
+                for element in &item.nodes {
+                    if let osm::UnresolvedReference::Node(id) = element {
+                        if node_ids.contains(&id) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
             _ => panic!("You're using exclusive filter on wrong type")
         }
     }

@@ -90,6 +90,19 @@ impl WayQueryBuilder {
         WayQueryBuilder { _qb: self._qb.clone().by_tag_eq(key, value) }
     }
 
+    #[text_signature = "(self, key, value)"]
+    /// Filter Way that contains nodes ``nodes``
+    ///
+    /// See :py:class:`Map` documentation for usage example.
+    ///
+    /// Parameters
+    /// ----------
+    /// nodes : List[int]
+    ///     A list of node ids.
+    pub fn where_contain_nodes(&self, nodes: Vec<osm::Id>) -> WayQueryBuilder {
+        WayQueryBuilder { _qb: self._qb.clone().contain_nodes(nodes) }
+    }
+
     #[text_signature = "(self)"]
     /// Returns the filtered Way list
     pub fn get(&self) -> Vec<Way> {
