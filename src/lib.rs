@@ -55,19 +55,44 @@ impl WayQueryBuilder {
 
 #[pymethods]
 impl WayQueryBuilder {
-    /// Return Node with given ``id``
+    #[text_signature = "(self, id)"]
+    /// Returns Node with given ``id``
     pub fn by_id(&self, id: osm::Id) -> Way {
         Way { inner: self._qb.by_id(id).clone() }
     }
 
+    #[text_signature = "(self, key, values)"]
     /// Filter Way with tag of key ``key`` that contains one of ``values``
     ///
     /// See :py:class:`Map` documentation for usage example.
-    pub fn by_tag_in(&self, key: &str, values: Vec<&str>) -> WayQueryBuilder {
+    ///
+    /// Parameters
+    /// ----------
+    /// key : str
+    ///     Key name of the tags.
+    /// values : List[str]
+    ///     Possible tag values to include.
+    pub fn where_tag_in(&self, key: &str, values: Vec<&str>) -> WayQueryBuilder {
         WayQueryBuilder { _qb: self._qb.clone().by_tag_in(key, values) }
     }
 
-    /// Return the filtered Way list
+    #[text_signature = "(self, key, value)"]
+    /// Filter Way with tag of key ``key`` equal ``value``
+    ///
+    /// See :py:class:`Map` documentation for usage example.
+    ///
+    /// Parameters
+    /// ----------
+    /// key : str
+    ///     Key name of the tags.
+    /// value : str
+    ///     A tag value to filter.
+    pub fn where_tag_eq(&self, key: &str, value: &str) -> WayQueryBuilder {
+        WayQueryBuilder { _qb: self._qb.clone().by_tag_eq(key, value) }
+    }
+
+    #[text_signature = "(self)"]
+    /// Returns the filtered Way list
     pub fn get(&self) -> Vec<Way> {
         self._qb.get().iter_mut()
         .map(|w| Way { inner: w.clone() })
@@ -89,19 +114,49 @@ impl NodeQueryBuilder {
 
 #[pymethods]
 impl NodeQueryBuilder {
-    /// Return Node with given ``id``
+    /// Returns Node with given ``id``
     pub fn by_id(&self, id: osm::Id) -> Node {
         Node { inner: self._qb.by_id(id).clone() }
     }
 
+    #[text_signature = "(self, key, values)"]
     /// Filter Node with tag of key ``key`` that contains one of ``values``
     ///
-    /// See :py:class:`Map` documentation for usage example.
-    pub fn by_tag_in(&self, key: &str, values: Vec<&str>) -> NodeQueryBuilder {
+    /// Parameters
+    /// ----------
+    /// key : str
+    ///     Key name of the tags.
+    /// values : List[str]
+    ///     Possible tag values to include.
+    ///
+    /// Returns
+    /// -------
+    /// self : :py:class:`.NodeQueryBuilder`
+    pub fn where_tag_in(&self, key: &str, values: Vec<&str>) -> NodeQueryBuilder {
         NodeQueryBuilder { _qb: self._qb.clone().by_tag_in(key, values) }
     }
 
-    /// Return the filtered Node list
+    #[text_signature = "(self, key, value)"]
+    /// Filter Node with tag of key ``key`` equal ``value``
+    ///
+    /// See :py:class:`Map` documentation for usage example.
+    ///
+    /// Parameters
+    /// ----------
+    /// key : str
+    ///     Key name of the tags.
+    /// value : str
+    ///     A tag value to filter.
+    ///
+    /// Returns
+    /// -------
+    /// self : :py:class:`.NodeQueryBuilder`
+    pub fn where_tag_eq(&self, key: &str, value: &str) -> NodeQueryBuilder {
+        NodeQueryBuilder { _qb: self._qb.clone().by_tag_eq(key, value) }
+    }
+
+    #[text_signature = "(self)"]
+    /// Returns the filtered Node list
     pub fn get(&self) -> Vec<Node> {
         self._qb.get().iter_mut()
         .map(|n| Node { inner: n.clone() })
@@ -120,9 +175,13 @@ impl NodeQueryBuilder {
 /// .. code-block:: python
 ///    :linenos:
 ///
-///    map = Map()
-///    streets = map.ways().by_tag_in("highstreet", [ "primary", "secondary" ]).get()
+///    map = Map("/path/to/map.osm")
+///    streets = map.ways().where_tag_in("highstreet", [ "primary", "secondary" ]).get()
 ///
+/// Tag is an element in OSM format looked like these:
+/// ``<tag key="akeyhere" value="somevalue" />``. So using the ``by_tag_in`` filter
+/// would means looping over all the ways in the OSM with the matching tag "highstreet"
+/// and value of "primary" or "secondary".
 struct Map {
     inner: osm::OSM,
 }
