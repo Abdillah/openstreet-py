@@ -81,14 +81,33 @@ pub(crate) trait QueryBuilder<T> {
     fn by_id(&self, id: i64) -> &T;
 }
 
+#[derive(Clone)]
+pub struct BuilderIter<'a, T> {
+    iter: std::collections::hash_map::Iter<'a, osm::Id, T>,
+}
+
+impl<'a, T> BuilderIter<'a, T> {
+    fn new(iter: std::collections::hash_map::Iter<'a, osm::Id, T>) -> Self {
+        BuilderIter { iter }
+    }
+}
+
+impl<'a, T> Iterator for BuilderIter<'a, T> {
+    type Item = (&'a osm::Id, &'a T);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next()
+    }
+}
 
 #[derive(Clone)]
-pub(crate) struct Builder<T> {
+pub(crate) struct Builder<T: Clone + 'static> {
     storage: std::sync::Arc<fnv::FnvHashMap<osm::Id, T>>,
+    // iter: Option<std::collections::hash_map::Iter<'static, osm::Id, T>>,
     conditions: Vec<FilterQuery>,
 }
 
-impl<T> Builder<T> {
+impl<T: Clone> Builder<T> {
     pub fn new(s: fnv::FnvHashMap<osm::Id, T>) -> Builder<T> {
         Builder {
             storage: std::sync::Arc::new(s),
@@ -96,12 +115,16 @@ impl<T> Builder<T> {
         }
     }
 
+    pub fn iter<'a>(&'a self) -> BuilderIter<'a, T> {
+        BuilderIter::new(self.storage.iter())
+    }
+
     fn filters(&self) -> Vec<FilterQuery> {
         self.conditions.clone()
     }
 }
 
-impl<T> Iterator for Builder<T> {
+impl<T: Clone> Iterator for Builder<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -174,6 +197,7 @@ mod test {
 
     use crate::query::Builder;
     use crate::query::FilterQuery;
+    use crate::query::QueryBuilder;
 
     #[test]
     fn test_by_multiple_tag() {
@@ -195,5 +219,21 @@ mod test {
             ].iter().map(|s| s.to_string()).collect::<Vec<String>>())
             == qstreets.filters().first().unwrap().clone()
         );
+    }
+
+    #[test]
+    fn test_iter() {
+        let f = File::open("resources/madina.osm").unwrap();
+        let doc = osm::OSM::parse(f).unwrap();
+
+        let mut qstreets = Builder::new(doc.ways)
+        .by_tag_in("highway", vec![
+            "primary"      , "secondary"      , "tertiary",
+            "primary_link" , "secondary_link" , "tertiary_link",
+            "residential"  , "service"
+        ]);
+
+        let mut iter = qstreets.iter();
+        assert!(iter.next().is_some());
     }
 }

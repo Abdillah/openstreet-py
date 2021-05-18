@@ -176,6 +176,35 @@ impl NodeQueryBuilder {
     }
 }
 
+use pyo3::class::iter::PyIterProtocol;
+
+#[pyclass]
+struct QueryIter {
+    #[allow(dead_code)]
+    inner: query::BuilderIter<'static, osm::Way>,
+}
+
+impl QueryIter {
+    pub fn iter(&self) -> query::BuilderIter<'static, osm::Way> {
+        self.inner.clone()
+    }
+}
+
+#[pyproto]
+impl PyIterProtocol for QueryIter {
+    fn __iter__(slf: PyRef<Self>) -> PyRef<Self> {
+        slf
+    }
+
+    fn __next__(slf: PyRefMut<Self>) -> Option<Py<Way>> {
+        let gil = Python::acquire_gil();
+        let py = gil.python();
+        slf.iter().next().map(|r| {
+            Py::new(py, Way { inner: r.1.clone() }).unwrap()
+        })
+    }
+}
+
 
 #[pyclass]
 /// Map provide parsing and storage for OSM format
@@ -237,6 +266,31 @@ impl Map {
         } else {
             None
         }
+    }
+}
+
+
+#[pyclass]
+/// OpenStreet Graph object
+struct StreetNetwork {
+    pub inner: fast_paths::InputGraph,
+    pub intersections: Vec<Node>,
+    pub keyed_ways: std::collections::HashMap<osm::Id, Vec<Way>>,
+}
+
+impl StreetNetwork {
+    pub fn new(map: &Map) -> Self {
+        let node_ways_idx: std::collections::HashMap<osm::Id, Vec<Way>> = std::collections::HashMap::new();
+        for way in map.ways() {
+
+        }
+
+        unimplemented!()
+    }
+
+    pub fn intersections() -> Vec<Node> {
+        unimplemented!()
+
     }
 }
 
