@@ -6,14 +6,9 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-# [lib]
-# name = "openstreet"
-# crate-type = ["cdylib"]
-
 [lib]
-name = "openstreet2"
+name = "openstreet"
 crate-type = ["cdylib"]
-path = "src/map.rs"
 
 [dependencies]
 fast_paths = "0.2.0"

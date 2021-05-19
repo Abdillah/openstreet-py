@@ -1,16 +1,15 @@
-extern crate osm_xml as osm;
-
+use osm_xml as osm;
 use std::collections::HashMap;
 use fnv::FnvHashMap;
 
-mod queries;
-mod python;
+use crate::queries;
+use crate::python;
 
 use queries::Builder as QueryBuilder;
 
 #[derive(Clone)]
 /// OpenStreet Map object
-struct Node {
+pub(crate) struct Node {
     inner: osm::Node,
     pub id: osm::Id,
     pub lat: osm::Coordinate,
@@ -38,7 +37,7 @@ impl From<&osm::Node> for Node {
 
 #[derive(Clone)]
 /// OpenStreet Way object
-struct Way {
+pub(crate) struct Way {
     inner: osm::Way,
     pub id: osm::Id,
     pub tags: HashMap<String, String>,
@@ -82,7 +81,7 @@ impl From<&osm::Way> for Way {
 }
 
 /// OpenStreet Bounds object
-struct Bounds {
+pub(crate) struct Bounds {
     /// Min latitude
     pub minlat: f64,
     /// Min longitude
@@ -93,7 +92,7 @@ struct Bounds {
     pub maxlon: f64,
 }
 
-pub trait TaggableElement {
+pub(crate) trait TaggableElement {
     fn get_id(&self) -> i64;
 
     fn get_tag_value(&self, key: &str) -> Option<&str>;
@@ -136,7 +135,7 @@ impl TaggableElement for Way {
 /// ``<tag key="akeyhere" value="somevalue" />``. So using the ``by_tag_in`` filter
 /// would means looping over all the ways in the OSM with the matching tag "highstreet"
 /// and value of "primary" or "secondary".
-struct Map {
+pub(crate) struct Map {
     inner: osm::OSM,
 }
 

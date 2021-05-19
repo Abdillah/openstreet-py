@@ -1,5 +1,8 @@
-use crate as map;
-use map::TaggableElement;
+/* query.rs */
+use osm_xml as osm;
+
+use crate::map;
+use crate::map::TaggableElement;
 
 #[derive(Clone, PartialEq)]
 pub(crate) enum FilterQuery {
@@ -130,7 +133,7 @@ impl<T: Clone> Builder<T> {
     }
 }
 
-impl<T: Clone> Iterator for Builder<T> where T: crate::TaggableElement {
+impl<T: Clone> Iterator for Builder<T> where T: map::TaggableElement {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {

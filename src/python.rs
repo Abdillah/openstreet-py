@@ -5,8 +5,10 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use pyo3::class::iter::{PyIterProtocol, IterNextOutput};
 
-use crate as map;
-use crate::queries as queries;
+use osm_xml as osm;
+
+use crate::map;
+use crate::queries;
 use crate::queries::QueryBuilder;
 
 #[pyclass]
