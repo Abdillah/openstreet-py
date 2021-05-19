@@ -104,9 +104,9 @@ struct NodeQueryIter {
 
 #[pyproto]
 impl PyIterProtocol for NodeQueryIter {
-    fn __next__(mut slf: PyRefMut<Self>) -> IterNextOutput<(i64, Node), &str> {
+    fn __next__(mut slf: PyRefMut<Self>) -> IterNextOutput<Node, &str> {
         if let Some(result) = slf.inner.next() {
-            IterNextOutput::Yield((result.0, result.1.into()))
+            IterNextOutput::Yield(result.1.into())
         } else {
             IterNextOutput::Return("Exhausted")
         }
