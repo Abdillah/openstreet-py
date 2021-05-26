@@ -30,7 +30,7 @@ def example_iterator(map):
 
         ctr = ctr - 1
 
-if __init__ == "__main__":
+if __name__ == "__main__":
     map = Map("./resources/madina.osm")
     example_get(map)
     example_iterator(map)
