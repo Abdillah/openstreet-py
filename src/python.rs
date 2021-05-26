@@ -21,21 +21,25 @@ struct Node {
 #[pymethods]
 impl Node {
     #[getter]
+    /// A numeric Id
     pub fn id(&self) -> PyResult<i64> {
         Ok(self.inner.id)
     }
 
     #[getter]
+    /// Latitude
     pub fn lat(&self) -> PyResult<f64> {
         Ok(self.inner.lat)
     }
 
     #[getter]
+    /// Longitude
     pub fn lon(&self) -> PyResult<f64> {
         Ok(self.inner.lon)
     }
 
     #[getter]
+    /// A Dictionary of tag key and value
     pub fn tags(&self) -> PyResult<HashMap<String, String>> {
         Ok(self.inner.tags.clone())
     }
@@ -57,16 +61,19 @@ struct Way {
 #[pymethods]
 impl Way {
     #[getter]
+    /// A numeric Id
     pub fn id(&self) -> PyResult<i64> {
         Ok(self.inner.id)
     }
 
     #[getter]
+    /// A Dictionary of tag key and value
     pub fn tags(&self) -> PyResult<HashMap<String, String>> {
         Ok(self.inner.tags.clone())
     }
 
     #[getter]
+    /// A List of Node IDs
     pub fn nodes(&self) -> PyResult<Vec<i64>> {
         Ok(self.inner.nodes.clone())
     }
@@ -322,7 +329,7 @@ impl Map {
         self.inner.nodes().into()
     }
 
-    /// Return bounds of map
+    /// Return Bounds object of the map
     pub fn bounds(&self) -> Option<Bounds> {
         if let Some(bounds) = self.inner.bounds() {
             Some(Bounds {
