@@ -306,7 +306,7 @@ impl PyIterProtocol for WayQueryBuilder {
 }
 
 
-#[pyclass]
+#[pyclass(subclass)]
 /// Map provide parsing and storage for OSM format
 ///
 /// Map contains three main information: nodes, ways, and bounds.
