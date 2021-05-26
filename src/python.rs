@@ -277,11 +277,31 @@ impl From<queries::Builder<map::Way>> for WayQueryBuilder {
     }
 }
 
+
+#[pyclass]
+/// Object that save filtering operations
+struct WayQueryIter {
+    inner: queries::BuilderIter<map::Way>,
+}
+
+#[pyproto]
+impl PyIterProtocol for WayQueryIter {
+    fn __next__(mut slf: PyRefMut<Self>) -> IterNextOutput<Way, &str> {
+        if let Some(result) = slf.inner.next() {
+            IterNextOutput::Yield(result.1.into())
+        } else {
+            IterNextOutput::Return("Exhausted")
+        }
+    }
+}
+
 #[pyproto]
 impl PyIterProtocol for WayQueryBuilder {
-    fn __iter__(slf: PyRef<Self>) -> PyRef<Self> {
-        unimplemented!()
-        // slf.inner.iter()
+    fn __iter__(slf: PyRef<Self>) -> PyResult<Py<WayQueryIter>> {
+        let iter = WayQueryIter {
+            inner: slf.inner.iter()
+        };
+        Py::new(slf.py(), iter)
     }
 }
 
