@@ -77,6 +77,11 @@ impl Way {
     pub fn nodes(&self) -> PyResult<Vec<i64>> {
         Ok(self.inner.nodes.clone())
     }
+
+    /// Determine whether it is a closed polygon (area) or not
+    pub fn is_area(&self) -> bool {
+        self.inner.is_polygon()
+    }
 }
 
 impl From<map::Way> for Way {
