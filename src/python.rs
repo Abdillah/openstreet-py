@@ -139,7 +139,7 @@ struct NodeQueryBuilder {
 impl NodeQueryBuilder {
     /// Returns Node with given ``id``
     pub fn by_id(&self, id: osm::Id) -> Node {
-        Node { inner: self.inner.by_id(id).clone() }
+        Node { inner: self.inner.by_id(id) }
     }
 
     #[text_signature = "(self, key, values)"]
@@ -216,7 +216,7 @@ impl WayQueryBuilder {
     #[text_signature = "(self, id)"]
     /// Returns Node with given ``id``
     pub fn by_id(&self, id: osm::Id) -> Way {
-        Way { inner: self.inner.by_id(id).clone() }
+        Way { inner: self.inner.by_id(id) }
     }
 
     #[text_signature = "(self, key, values)"]
