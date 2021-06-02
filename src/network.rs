@@ -8,12 +8,13 @@ use bidir_map::{BidirMap, ByFirst, BySecond};
 use crate::queries::QueryBuilder;
 use crate::map;
 use crate::map::{Way, Node};
+use crate::structure::NodeMap;
 
 /// Graph for  OpenStreet's streets
 pub struct StreetNetwork {
     pub inner: fast_paths::InputGraph,
-    pub node_idx: BidirMap<i64, usize>,
-    pub intersection_nodes: Vec<Node>,
+    pub node_idx: NodeMap<i64>,
+    // pub intersection_nodes: Vec<Node>,
     pub indexed_ways: std::collections::HashMap<osm::Id, Vec<Way>>,
 }
 
@@ -30,39 +31,19 @@ impl StreetNetwork {
             "residential"  , "service"
         ]);
 
-        let mut node_idx: BidirMap<i64, usize> = BidirMap::new();
+        let mut node_idx: NodeMap<i64> = NodeMap::new();
         let mut node_ways_idx: std::collections::HashMap<osm::Id, Vec<Way>> = std::collections::HashMap::new();
 
         let mut c = 0;
         for (i64, way) in qstreets.iter() {
             let size = way.nodes.len();
             for i in 0..(size-1) {
-                let mut a: usize = {
-                    let mut a = way.nodes[i];
-                    if !node_idx.contains_first_key(&a) {
-                        c += 1;
-                        node_idx.insert(a, c - 1);
-                        c - 1
-                    } else {
-                        node_idx[ByFirst(&a)]
-                    }
-                };
-
-                let mut b: usize = {
-                    let mut b = way.nodes[i+1];
-                    if !node_idx.contains_first_key(&b) {
-                        c += 1;
-                        node_idx.insert(b, c - 1);
-                        c - 1
-                    } else {
-                        node_idx[ByFirst(&b)]
-                    }
-                };
-
+                let mut a: usize = node_idx.get_or_insert(way.nodes[i]);
+                let mut b: usize = node_idx.get_or_insert(way.nodes[i+1]);
                 let w = rand::random::<u8>();
 
                 graph.add_edge_bidir(a, b, w as usize);
-                println!("Add edge {} <-({})-> {}", a, w, b)
+                println!("Add edge {}/{} <-({})-> {}/{}", a, way.nodes[i], w, b, way.nodes[i+1])
             }
 
             for node_id in &way.nodes {
@@ -76,6 +57,7 @@ impl StreetNetwork {
             }
             // println!("Way {}", way.id);
         }
+        node_idx.guarantee_node_ordering(&mut graph);
         graph.freeze();
         println!("There are {} edges added, {} num nodes", c, graph.get_num_nodes());
 
@@ -92,18 +74,14 @@ impl StreetNetwork {
 
     }
 
-    pub fn shortest_path(&self, a: i64, b: i64) -> Vec<i64> {
-        println!("Prepare.");
+    pub fn shortest_path(&mut self, a: i64, b: i64) -> Vec<i64> {
         // prepare the graph for fast shortest path calculations. note that you have to do this again if you want to change the
         // graph topology or any of the edge weights
         let fast_graph = fast_paths::prepare(&self.inner);
 
-        println!("Fast path.");
         // calculate the shortest path between nodes with ID 8 and 6
         match fast_paths::calc_path(&fast_graph, a.try_into().unwrap(), b.try_into().unwrap()) {
-            Some(p) => p.get_nodes().iter()
-                                    .map(|n| self.node_idx[BySecond(n)])
-                                    .collect(),
+            Some(p) => self.node_idx.translate(&p),
             None => vec![],
         }
     }
@@ -120,7 +98,7 @@ fn test_fastpath() {
     let map = crate::map::Map::new("resources/madina.osm".into());
 
     println!("Into StreetNetwork!");
-    let gra = StreetNetwork::new(&map, vec![
+    let mut gra = StreetNetwork::new(&map, vec![
         "primary"      , "secondary"      , "tertiary",
         "primary_link" , "secondary_link" , "tertiary_link",
         "residential"  , "service"
