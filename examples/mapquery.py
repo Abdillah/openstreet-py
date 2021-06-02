@@ -33,11 +33,12 @@ def example_iterator(map):
 
 def example_graph(map):
     snet = StreetNetwork(map, [ "primary" ]);
-    path = snet.shortest_path(101001, 10101010);
+    path = snet.shortest_path(4137262376, 4137262384);
 
-    print("Shortest path between ", 0, " and ", 1, " are ", path)
+    print("Shortest path between ", 4137262376, " and ", 4137262384, " are ", path)
 
 if __name__ == "__main__":
     map = Map("./resources/madina.osm")
     example_get(map)
     example_iterator(map)
+    example_graph(map)

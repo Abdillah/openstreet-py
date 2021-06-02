@@ -81,7 +81,9 @@ impl StreetNetwork {
         let fast_graph = fast_paths::prepare(&self.inner);
 
         // calculate the shortest path between nodes with ID 8 and 6
-        match fast_paths::calc_path(&fast_graph, a.try_into().unwrap(), b.try_into().unwrap()) {
+        let a = self.node_idx.get_or_insert(a);
+        let b = self.node_idx.get_or_insert(b);
+        match fast_paths::calc_path(&fast_graph, a, b) {
             Some(p) => self.node_idx.translate(&p),
             None => vec![],
         }
