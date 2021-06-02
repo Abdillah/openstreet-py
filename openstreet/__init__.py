@@ -1,3 +1,3 @@
 from ._binding import *
 
-__all__ = [ 'Map', 'Way', 'Node', 'Bounds', 'WayQueryBuilder', 'NodeQueryBuilder' ]
+__all__ = [ 'Map', 'Way', 'Node', 'Bounds', 'WayQueryBuilder', 'NodeQueryBuilder', 'StreetNetwork' ]

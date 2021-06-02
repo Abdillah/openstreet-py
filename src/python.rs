@@ -9,6 +9,7 @@ use osm_xml as osm;
 use crate::map;
 use crate::queries;
 use crate::queries::QueryBuilder;
+use crate::network;
 
 #[pyclass]
 #[derive(Clone)]
@@ -306,6 +307,7 @@ impl PyIterProtocol for WayQueryBuilder {
 
 
 #[pyclass(subclass)]
+#[derive(Clone)]
 /// Map provide parsing and storage for OSM format
 ///
 /// Map contains three main information: nodes, ways, and bounds.
@@ -369,6 +371,27 @@ impl Map {
 }
 
 
+#[pyclass(subclass)]
+/// StreetNetwork create graph of street nodes and enable graph ops
+struct StreetNetwork {
+    inner: network::StreetNetwork,
+}
+
+#[pymethods]
+impl StreetNetwork {
+    #[new]
+    pub fn new(map: Map, street_type: Vec<&str>) -> Self {
+        Self {
+            inner: network::StreetNetwork::new(&map.inner, street_type)
+        }
+    }
+
+    pub fn shortest_path(&mut self, a: i64, b: i64) -> Vec<i64> {
+        self.inner.shortest_path(a, b)
+    }
+}
+
+
 #[pymodule]
 fn _binding(py: Python, m: &PyModule) -> PyResult<()> {
     m.add("__name__", "openstreet")?;
@@ -380,5 +403,7 @@ fn _binding(py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<Bounds>()?;
     m.add_class::<NodeQueryBuilder>()?;
     m.add_class::<WayQueryBuilder>()?;
+
+    m.add_class::<StreetNetwork>()?;
     Ok(())
 }
