@@ -9,6 +9,11 @@ edition = "2018"
 [lib]
 name = "openstreet"
 crate-type = ["cdylib", "lib"]
+path = "src/lib.rs"
+
+[[bin]]
+name = "streetgraphing"
+path = "src/main.rs"
 
 [dependencies]
 fast_paths = "0.2.0"
