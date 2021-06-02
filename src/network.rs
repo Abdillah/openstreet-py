@@ -24,12 +24,10 @@ impl StreetNetwork {
         println!("- Constraints: {:?}", street_types);
 
         let mut graph = fast_paths::InputGraph::new();
-        let qstreets = map.ways()
-        .by_tag_in("highway", vec![
-            "primary"      , "secondary"      , "tertiary",
-            "primary_link" , "secondary_link" , "tertiary_link",
-            "residential"  , "service"
-        ]);
+        let mut qstreets = map.ways();
+        if street_types.len() > 0 {
+            qstreets = qstreets.by_tag_in("highway", street_types);
+        }
 
         let mut node_idx: NodeMap<i64> = NodeMap::new();
         let mut node_ways_idx: std::collections::HashMap<osm::Id, Vec<Way>> = std::collections::HashMap::new();
