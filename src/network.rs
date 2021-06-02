@@ -79,27 +79,10 @@ impl StreetNetwork {
         graph.freeze();
         println!("There are {} edges added, {} num nodes", c, graph.get_num_nodes());
 
-        // i64:  9223372036854775807
-        // usi: 18446744073709551615
-        println!("Construct Intersection catalog..");
-        let qnodes = map.nodes();
-        let mut intersection_nodes: Vec<Node> = vec![];
-        for (node_id, ways) in &node_ways_idx {
-            // println!("Processing node #{}", node_id);
-
-            if ways.len() > 1 {
-                let node = qnodes.by_id(*node_id);
-                intersection_nodes.push(node)
-            }
-        }
-
-        println!("{:?}", node_idx);
-
         println!("Return StreetNetwork");
         Self {
             inner: graph,
             node_idx,
-            intersection_nodes,
             indexed_ways: node_ways_idx,
         }
     }
