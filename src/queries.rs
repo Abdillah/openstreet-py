@@ -133,15 +133,6 @@ impl<T: Clone> Builder<T> {
     }
 }
 
-impl<T: Clone> Iterator for Builder<T> where T: map::TaggableElement {
-    type Item = T;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.storage.iter();
-        unimplemented!()
-    }
-}
-
 impl Builder<map::Way> {
     pub fn contain_nodes(mut self, node_ids: Vec<i64>) -> Self {
         self.conditions.push(FilterQuery::HasNodes(node_ids));
