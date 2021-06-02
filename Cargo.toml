@@ -8,7 +8,7 @@ edition = "2018"
 
 [lib]
 name = "openstreet"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "lib"]
 
 [dependencies]
 fast_paths = "0.2.0"

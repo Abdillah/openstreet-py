@@ -2,7 +2,6 @@
 use std::collections::HashMap;
 
 use pyo3::prelude::*;
-use pyo3::types::PyDict;
 use pyo3::class::iter::{PyIterProtocol, IterNextOutput};
 
 use osm_xml as osm;

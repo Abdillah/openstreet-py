@@ -5,7 +5,7 @@ use crate::map;
 use crate::map::TaggableElement;
 
 #[derive(Clone, PartialEq)]
-pub(crate) enum FilterQuery {
+pub enum FilterQuery {
     // Non-lazy filter already O(1)
     // ById(i64),
     ByTag(String, Vec<String>),
@@ -62,7 +62,7 @@ impl Filter<map::Way> for FilterQuery {
     }
 }
 
-pub(crate) trait QueryBuilder<T> {
+pub trait QueryBuilder<T> {
     fn append_filter(&mut self, f: FilterQuery);
 
     fn by_tag_eq(mut self, key: &str, value: &str) -> Self where Self: Sized {
@@ -109,7 +109,7 @@ impl<'a, T: Clone> Iterator for BuilderIter<T> {
 }
 
 #[derive(Clone)]
-pub(crate) struct Builder<T: Clone> {
+pub struct Builder<T: Clone> {
     storage: std::sync::Arc<fnv::FnvHashMap<osm::Id, T>>,
     // iter: Option<std::collections::hash_map::Iter<'static, osm::Id, T>>,
     conditions: Vec<FilterQuery>,
