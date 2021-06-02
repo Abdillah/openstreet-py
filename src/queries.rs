@@ -204,6 +204,7 @@ impl QueryBuilder<map::Node> for Builder<map::Node> {
 }
 
 mod test {
+    use osm_xml as osm;
     use crate::queries::Builder;
     use crate::queries::FilterQuery;
     use crate::queries::QueryBuilder;
@@ -213,7 +214,12 @@ mod test {
         let f = std::fs::File::open("resources/madina.osm").unwrap();
         let doc = osm::OSM::parse(f).unwrap();
 
-        let mut qstreets = Builder::new(doc.ways)
+        let mut hm: fnv::FnvHashMap<i64, crate::map::Way> = fnv::FnvHashMap::default();
+        for (key, value) in doc.ways.iter() {
+            hm.insert(*key, value.into());
+        }
+
+        let mut qstreets: Builder<crate::map::Way> = Builder::new(hm)
         .by_tag_in("highway", vec![
             "primary"      , "secondary"      , "tertiary",
             "primary_link" , "secondary_link" , "tertiary_link",
@@ -235,7 +241,12 @@ mod test {
         let f = std::fs::File::open("resources/madina.osm").unwrap();
         let doc = osm::OSM::parse(f).unwrap();
 
-        let mut qstreets = Builder::new(doc.ways)
+        let mut hm: fnv::FnvHashMap<i64, crate::map::Way> = fnv::FnvHashMap::default();
+        for (key, value) in doc.ways.iter() {
+            hm.insert(*key, value.into());
+        }
+
+        let mut qstreets: Builder<crate::map::Way> = Builder::new(hm)
         .by_tag_in("highway", vec![
             "primary"      , "secondary"      , "tertiary",
             "primary_link" , "secondary_link" , "tertiary_link",
