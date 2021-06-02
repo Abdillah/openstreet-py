@@ -1,9 +1,11 @@
 /* network.rs */
+extern crate serde;
 use std::convert::TryInto;
 
 use osm_xml as osm;
 use rand;
 use bidir_map::{BidirMap, ByFirst, BySecond};
+use serde::Serialize;
 
 use crate::queries::QueryBuilder;
 use crate::map;
@@ -11,6 +13,7 @@ use crate::map::{Way, Node};
 use crate::structure::NodeMap;
 
 /// Graph for  OpenStreet's streets
+#[derive(Serialize)]
 pub struct StreetNetwork {
     pub inner: fast_paths::InputGraph,
     pub node_idx: NodeMap<i64>,

@@ -1,16 +1,17 @@
+/* Map */
+
 use osm_xml as osm;
 use std::collections::HashMap;
 use fnv::FnvHashMap;
+use serde::Serialize;
 
 use crate::queries;
-// use crate::python;
+use crate::queries::Builder as QueryBuilder;
 
-use queries::Builder as QueryBuilder;
-
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 /// OpenStreet Map object
 pub struct Node {
-    inner: osm::Node,
+    // inner: osm::Node,
     pub id: osm::Id,
     pub lat: osm::Coordinate,
     pub lon: osm::Coordinate,
@@ -19,14 +20,14 @@ pub struct Node {
 
 impl From<&osm::Node> for Node {
     fn from(node: &osm::Node) -> Self {
-        let node_o = node.clone();
+        // let node_o = node.clone();
         let mut tagdict = HashMap::new();
         Node {
-            inner: node.clone(),
-            id: node_o.id,
-            lat: node_o.lat,
-            lon: node_o.lon,
-            tags: node_o.tags.iter()
+            // inner: node.clone(),
+            id: node.id,
+            lat: node.lat,
+            lon: node.lon,
+            tags: node.tags.iter()
             .fold(tagdict, |mut d, t| {
                 d.insert(t.key.clone(), t.val.clone());
                 d
@@ -35,10 +36,167 @@ impl From<&osm::Node> for Node {
     }
 }
 
-#[derive(Clone)]
+// Taken from https://github.com/orva/osm-xml/blob/6e0d7f6d932f353ecb5d32a54a129240cbca7e99/src/polygon.rs
+
+struct Rule {
+    key: &'static str,
+    polygon: RuleType,
+    values: [&'static str; 6],
+}
+
+impl Rule {
+    fn has_matching_value(&self, tval: &str) -> bool {
+        match self.polygon {
+            RuleType::All => true,
+            RuleType::Whitelist => self.values.iter().any(|val| *val != "" && *val == tval),
+            RuleType::Blacklist => !self.values.iter().any(|val| *val == tval),
+        }
+    }
+}
+
+enum RuleType {
+    All,
+    Blacklist,
+    Whitelist,
+}
+
+static RULES: [Rule; 26] =
+    [Rule {
+         key: "building",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "highway",
+         polygon: RuleType::Whitelist,
+         values: ["services", "rest_area", "escape", "elevator", "", ""],
+     },
+     Rule {
+         key: "natural",
+         polygon: RuleType::Blacklist,
+         values: ["coastline", "cliff", "ridge", "arete", "tree_row", ""],
+     },
+     Rule {
+         key: "landuse",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "waterway",
+         polygon: RuleType::Whitelist,
+         values: ["riverbank", "dock", "boatyard", "dam", "", ""],
+     },
+     Rule {
+         key: "amenity",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "leisure",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "barrier",
+         polygon: RuleType::Whitelist,
+         values: ["city_wall", "ditch", "hedge", "retaining_wall", "wall", "spikes"],
+     },
+     Rule {
+         key: "railway",
+         polygon: RuleType::Whitelist,
+         values: ["station", "turntable", "roundhouse", "platform", "", ""],
+     },
+     Rule {
+         key: "area",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "boundary",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "man_made",
+         polygon: RuleType::Blacklist,
+         values: ["cutline", "embankment", "pipeline", "", "", ""],
+     },
+     Rule {
+         key: "power",
+         polygon: RuleType::Whitelist,
+         values: ["plant", "substation", "generator", "transformer", "", ""],
+     },
+     Rule {
+         key: "place",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "shop",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "aeroway",
+         polygon: RuleType::Blacklist,
+         values: ["taxiway", "", "", "", "", ""],
+     },
+     Rule {
+         key: "tourism",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "historic",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "public_transport",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "office",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "building:part",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "military",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "ruins",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "area:highway",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "craft",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     },
+     Rule {
+         key: "golf",
+         polygon: RuleType::All,
+         values: ["", "", "", "", "", ""],
+     }];
+
+
+#[derive(Clone, Serialize)]
 /// OpenStreet Way object
 pub struct Way {
-    inner: osm::Way,
+    // inner: osm::Way,
     pub id: osm::Id,
     pub tags: HashMap<String, String>,
     pub nodes: Vec<i64>,
@@ -46,15 +204,21 @@ pub struct Way {
 
 impl Way {
     pub fn nodes(&self) -> Vec<i64> {
-        self.inner.nodes.iter()
-        .map(|n| if let osm::UnresolvedReference::Node(id) = n { Some(id) } else { None })
-        .filter(|n| n.is_some())
-        .map(|n| *n.unwrap())
+        self.nodes.iter()
+        .map(|n| *n)
         .collect::<Vec<i64>>()
     }
 
     pub fn is_polygon(&self) -> bool {
-        self.inner.is_polygon()
+        if self.nodes.first() == self.nodes.last() {
+            return true;
+        }
+
+        RULES.iter()
+        .any(|rule| {
+            let tagval = self.tags.get(rule.key).map(|v| v.clone()).unwrap_or(String::from(""));
+            rule.has_matching_value(&tagval)
+        })
     }
 }
 
@@ -64,7 +228,7 @@ impl From<&osm::Way> for Way {
         let mut tagdict = HashMap::new();
 
         Way {
-            inner: way.clone(),
+            // inner: way.clone(),
             id: way_o.id,
             tags: way_o.tags.iter()
             .fold(tagdict, |mut d, t| {
@@ -80,6 +244,7 @@ impl From<&osm::Way> for Way {
     }
 }
 
+#[derive(Clone)]
 /// OpenStreet Bounds object
 pub struct Bounds {
     /// Min latitude
@@ -119,6 +284,7 @@ impl TaggableElement for Way {
 }
 
 
+#[derive(Clone)]
 /// Map provide parsing and storage for OSM format
 ///
 /// Map contains three main information: nodes, ways, and bounds.
@@ -136,7 +302,10 @@ impl TaggableElement for Way {
 /// would means looping over all the ways in the OSM with the matching tag "highstreet"
 /// and value of "primary" or "secondary".
 pub struct Map {
-    inner: osm::OSM,
+    // inner: osm::OSM,
+    nodes: FnvHashMap<i64, Node>,
+    ways: FnvHashMap<i64, Way>,
+    bounds: Option<Bounds>,
 }
 
 impl Map {
@@ -144,8 +313,31 @@ impl Map {
         let f = std::fs::File::open(path).unwrap();
         let doc = osm::OSM::parse(f).unwrap();
 
+        // TODO: Remove runtime overhead by clone the xml parser
+        let mut nodes: FnvHashMap<i64, Node> = FnvHashMap::default();
+        for (id, node) in &doc.nodes {
+            nodes.insert(*id, node.into());
+        }
+
+        let mut ways: FnvHashMap<i64, Way> = FnvHashMap::default();
+        for (id, way) in &doc.ways {
+            ways.insert(*id, way.into());
+        }
+
+        let bounds = doc.bounds.map(|bounds| {
+            Bounds {
+                minlat: bounds.minlat,
+                minlon: bounds.minlon,
+                maxlat: bounds.maxlat,
+                maxlon: bounds.maxlon,
+            }
+        });
+
         Map {
-            inner: doc,
+            // inner: doc,
+            ways: ways,
+            nodes: nodes,
+            bounds: bounds,
         }
     }
 
@@ -155,12 +347,7 @@ impl Map {
     /// Call :py:func:`WayQueryBuilder.get` when done to retrieve the result.
     /// See :py:class:`Map` documentation for example.
     pub fn ways(&self) -> QueryBuilder<Way> {
-        // TODO: Remove runtime overhead by clone the xml parser
-        let mut ways: FnvHashMap<i64, Way> = FnvHashMap::default();
-        for (id, way) in &self.inner.ways {
-            ways.insert(*id, way.into());
-        }
-        QueryBuilder::<Way>::new(ways)
+        QueryBuilder::<Way>::new(self.ways.clone())
     }
 
     /// Return query builder to filter ways collection
@@ -169,25 +356,11 @@ impl Map {
     /// Call :py:func:`NodeQueryBuilder.get` when done to retrieve the result.
     /// See :py:class:`Map` documentation for example.
     pub fn nodes(&self) -> QueryBuilder<Node> {
-        let mut nodes: FnvHashMap<i64, Node> = FnvHashMap::default();
-        for (id, node) in &self.inner.nodes {
-            nodes.insert(*id, node.into());
-        }
-
-        QueryBuilder::<Node>::new(nodes)
+        QueryBuilder::<Node>::new(self.nodes.clone())
     }
 
     /// Return bounds of map
     pub fn bounds(&self) -> Option<Bounds> {
-        if let Some(bounds) = self.inner.bounds {
-            Some(Bounds {
-                minlat: bounds.minlat,
-                minlon: bounds.minlon,
-                maxlat: bounds.maxlat,
-                maxlon: bounds.maxlon,
-            })
-        } else {
-            None
-        }
+        self.bounds.clone()
     }
 }
