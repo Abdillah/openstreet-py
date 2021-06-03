@@ -76,7 +76,7 @@ pub trait QueryBuilder<T> {
         self
     }
 
-    fn has_tag(mut self, key: &str) -> Self where Self: Sized {
+    fn has_tag(self, _key: &str) -> Self where Self: Sized {
         unimplemented!()
     }
 
@@ -159,7 +159,7 @@ impl QueryBuilder<map::Way> for Builder<map::Way> {
 
     fn get(&self) -> Vec<map::Way> {
         let mut r: Vec<map::Way> = vec![];
-        for (k, v) in self.storage.iter() {
+        for (_k, v) in self.storage.iter() {
             for c in &self.conditions {
                 if c.filter(v.clone()) {
                     r.push(v.clone())
@@ -183,7 +183,7 @@ impl QueryBuilder<map::Node> for Builder<map::Node> {
 
     fn get(&self) -> Vec<map::Node> {
         let mut r: Vec<map::Node> = vec![];
-        for (k, v) in self.storage.iter() {
+        for (_k, v) in self.storage.iter() {
             for c in &self.conditions {
                 if c.filter(v.clone()) {
                     r.push(v.clone())
@@ -194,6 +194,8 @@ impl QueryBuilder<map::Node> for Builder<map::Node> {
     }
 }
 
+
+#[cfg(test)]
 mod test {
     use osm_xml as osm;
     use crate::queries::Builder;
