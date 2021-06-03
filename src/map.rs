@@ -209,14 +209,18 @@ impl Way {
     }
 
     pub fn is_polygon(&self) -> bool {
-        if self.nodes.first() == self.nodes.last() {
+        if self.nodes.len() > 0 && self.nodes.first() == self.nodes.last() {
             return true;
         }
 
         RULES.iter()
         .any(|rule| {
-            let tagval = self.tags.get(rule.key).map(|v| v.clone()).unwrap_or(String::from(""));
-            rule.has_matching_value(&tagval)
+            let mut r = false;
+            if let Some(tagval) = self.tags.get(rule.key).map(|v| v.clone()) {
+                r = rule.has_matching_value(&tagval);
+                // println!("Rule key {} tagval {} => {}", rule.key, tagval, r);
+            }
+            r
         })
     }
 }
@@ -362,4 +366,269 @@ impl Map {
     pub fn bounds(&self) -> Option<Bounds> {
         self.bounds.clone()
     }
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    macro_rules! map(
+        { $($key:expr => $value:expr),+ } => {
+            {
+                let mut m = ::std::collections::HashMap::new();
+                $(
+                    m.insert($key, $value);
+                )+
+                m
+            }
+        };
+    );
+
+    #[test]
+    fn tagless_and_nonloop_is_not_polygon() {
+        let way = Way {
+            id: 1234567,
+            tags: HashMap::new(),
+            nodes: Vec::new(),
+        };
+
+        assert!(!way.is_polygon());
+    }
+
+    #[test]
+    fn closed_loop_is_polygon() {
+        let way = Way {
+            id: 1234567,
+            tags: HashMap::new(),
+            nodes: vec![
+                1,
+                2,
+                3,
+                26,
+                1,
+            ],
+        };
+
+        assert!(way.is_polygon());
+    }
+
+    #[test]
+    fn detect_ruletype_all_with_tag_val() {
+        let way = Way {
+            id: 1234567,
+            tags: map!{
+                "building".to_owned() => "this_is_not_valid".to_owned()
+            },
+            nodes: Vec::new(),
+        };
+
+        assert!(way.is_polygon());
+    }
+
+    #[test]
+    fn detect_ruletype_all_without_tag_val() {
+        let way = Way {
+            id: 1234567,
+            tags: map!{
+                "building".to_owned() => "".to_owned()
+            },
+            nodes: Vec::new(),
+        };
+
+        assert!(way.is_polygon());
+    }
+
+    // #[test]
+    // fn whitelist_val_included_is_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("highway"),
+    //                        val: String::from("escape"),
+    //                    }],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn whitelist_val_not_included_is_not_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("highway"),
+    //                        val: String::from("footway"),
+    //                    }],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(!is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn whitelist_with_empty_val_is_not_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("highway"),
+    //                        val: String::from(""),
+    //                    }],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(!is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn whitelist_with_matching_and_nonmatching_tags_is_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![
+    //             Tag { key: String::from("highway"), val: String::from("footway") },
+    //             Tag { key: String::from("highway"), val: String::from("escape") },
+    //             ],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn nonloop_and_whitelist_match_is_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("highway"),
+    //                        val: String::from("escape"),
+    //                    }],
+    //         nodes: vec![
+    //             UnresolvedReference::Node(1),
+    //             UnresolvedReference::Node(2),
+    //             UnresolvedReference::Node(3),
+    //             ],
+    //     };
+
+    //     assert!(is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn blacklist_val_included_is_not_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("natural"),
+    //                        val: String::from("cliff"),
+    //                    }],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(!is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn blacklist_val_not_included_is_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("natural"),
+    //                        val: String::from("tree"),
+    //                    }],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn blacklist_with_empty_val_is_not_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("natural"),
+    //                        val: String::from(""),
+    //                    }],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(!is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn blacklist_with_matching_and_nonmatching_tags_is_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![
+    //             Tag { key: String::from("natural"), val: String::from("cliff") },
+    //             Tag { key: String::from("natural"), val: String::from("tree") },
+    //             ],
+    //         nodes: Vec::new(),
+    //     };
+
+    //     assert!(is_polygon(&way));
+    // }
+
+    // #[test]
+    // fn nonloop_and_blacklist_cleared_is_polygon() {
+    //     let way = Way {
+    //         id: 1234567,
+    //         tags: vec![Tag {
+    //                        key: String::from("natural"),
+    //                        val: String::from("tree"),
+    //                    }],
+    //         nodes: vec![
+    //             UnresolvedReference::Node(1),
+    //             UnresolvedReference::Node(2),
+    //             UnresolvedReference::Node(3),
+    //             ],
+    //     };
+
+    //     assert!(is_polygon(&way));
+    // }
+
+
+    // #[test]
+    // fn rules_with_no_value_are_not_polygons() {
+    //     let keys = vec![
+    //         "building",
+    //         "highway",
+    //         "natural",
+    //         "landuse",
+    //         "waterway",
+    //         "amenity",
+    //         "leisure",
+    //         "barrier",
+    //         "railway",
+    //         "area",
+    //         "boundary",
+    //         "man_made",
+    //         "power",
+    //         "place",
+    //         "shop",
+    //         "aeroway",
+    //         "tourism",
+    //         "historic",
+    //         "public_transport",
+    //         "office",
+    //         "building:part",
+    //         "military",
+    //         "ruins",
+    //         "area:highway",
+    //         "craft",
+    //         "golf",
+    //         ];
+
+    //     let ways = keys.iter().map(|key| {
+    //         return Way {
+    //             id: 1234567,
+    //             tags: vec![ Tag { key: String::from(*key), val: String::from("no") }, ],
+    //             nodes: Vec::new(),
+    //         };
+    //     });
+
+    //     for way in ways {
+    //         assert!(!is_polygon(&way));
+    //     }
+    // }
 }
