@@ -87,36 +87,10 @@ impl StreetNetwork {
     }
 
     pub fn serialize(&self) -> Vec<u8> {
-        // let encoded: Vec<u8> = bincode::serialize(&self.inner).unwrap();
-        // std::fs::write(path, encoded).unwrap();
-
-        // let n = bincode::serialize(&self).unwrap();
-
-        // let mut s = flexbuffers::FlexbufferSerializer::new();
-        // let n = monster.serialize(&mut s).unwrap();
-
-        // let mut n = Vec::new();
-        // if let bson::Bson::Document(redacted_bson) = bson::to_bson(&self.inner).unwrap() {
-        //     redacted_bson.to_writer(&mut n);
-        // }
-
-        let n = serde_json::to_string(&self).unwrap().as_bytes().to_vec();
-
-        println!("Serialized size: {}", n.len());
-        n
+        serde_json::to_string(&self).unwrap().as_bytes().to_vec()
     }
 
     pub fn deserialize(state: Vec<u8>) -> Self {
-        println!("Deserialized size: {}", state.len());
-
-        // bincode::deserialize(&state).unwrap()
-
-        // let r = flexbuffers::Reader::get_root(s.view()).unwrap();
-        // Self::deserialize(r).unwrap()
-
-        // let doc = bson::Document::from_reader(&mut std::io::Cursor::new(&state[..])).unwrap();
-        // bson::from_bson(bson::Bson::Document(doc)).unwrap()
-
         serde_json::from_str(std::str::from_utf8(&state).unwrap()).unwrap()
     }
 }

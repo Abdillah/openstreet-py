@@ -6,6 +6,7 @@ use std::path::Path;
 use openstreet::network::StreetNetwork;
 use openstreet::map::Map;
 
+// NOTE: For now this can't be used because we prefer the pickle version.
 fn main() {
     // Prints each argument on a separate line
     let mapfilepath = match env::args().nth(1) {
@@ -30,14 +31,6 @@ fn main() {
     ]);
 
     let path: &Path = Path::new(&outpath);
-
-    // let gra4 = StreetNetwork {
-    //     inner: fast_paths::InputGraph::new(),
-    //     node_idx: openstreet::structure::NodeMap::new(),
-    //     nodeways_idx: std::collections::HashMap::new(),
-    // };
-
-    // Serialize it to a JSON string.
     let bytes = serde_json::to_string(&gra).unwrap();
     fs::write(path, bytes);
 
