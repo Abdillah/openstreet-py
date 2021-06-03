@@ -41,7 +41,7 @@ impl StreetNetwork {
                 let w = rand::random::<u8>();
 
                 graph.add_edge_bidir(a, b, w as usize);
-                println!("Add edge {}/{} <-({})-> {}/{}", a, way.nodes[i], w, b, way.nodes[i+1])
+                // println!("Add edge {}/{} <-({})-> {}/{}", a, way.nodes[i], w, b, way.nodes[i+1])
             }
 
             for node_id in &way.nodes {
@@ -57,9 +57,9 @@ impl StreetNetwork {
         }
         node_idx.guarantee_node_ordering(&mut graph);
         graph.freeze();
-        println!("There are {} edges added, {} num nodes", c, graph.get_num_nodes());
+        // println!("There are {} edges added, {} num nodes", c, graph.get_num_nodes());
 
-        println!("Return StreetNetwork");
+        // println!("Return StreetNetwork");
         Self {
             inner: graph,
             node_idx,
