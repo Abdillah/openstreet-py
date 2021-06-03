@@ -1,5 +1,6 @@
 import os
 import sys
+import pickle
 
 # We need native module, so build the project first.
 dirname = os.path.dirname(os.path.realpath(__file__))
@@ -33,12 +34,25 @@ def example_iterator(map):
 
 def example_graph(map):
     snet = StreetNetwork(map, [ "primary" ]);
-    path = snet.shortest_path(4137262376, 4137262384);
 
-    print("Shortest path between ", 4137262376, " and ", 4137262384, " are ", path)
+    print("Shortest path between ", 4137262376, " and ", 4137262384)
+    path = snet.shortest_path(4137262376, 4137262384);
+    print(".. are ", path)
+
+    print("Pickling..")
+    f = open('./streetnetwork.pickle', 'wb')
+    pickle.dump(snet, f)
+
+    print("Recovering..")
+    f = open('./streetnetwork.pickle', 'rb')
+    snet2 = pickle.load(f)
+
+    print("Shortest path between ", 4137262376, " and ", 4137262384)
+    path = snet2.shortest_path(4137262376, 4137262384)
+    print(".. are ", path)
 
 if __name__ == "__main__":
     map = Map("./resources/madina.osm")
-    example_get(map)
-    example_iterator(map)
+    # example_get(map)
+    # example_iterator(map)
     example_graph(map)

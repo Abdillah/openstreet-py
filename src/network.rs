@@ -1,11 +1,7 @@
 /* network.rs */
 extern crate serde;
-use std::convert::TryInto;
-
-use osm_xml as osm;
 use rand;
-use bidir_map::{BidirMap, ByFirst, BySecond};
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::queries::QueryBuilder;
 use crate::map;
@@ -13,12 +9,12 @@ use crate::map::{Way, Node};
 use crate::structure::NodeMap;
 
 /// Graph for  OpenStreet's streets
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct StreetNetwork {
     pub inner: fast_paths::InputGraph,
     pub node_idx: NodeMap<i64>,
     // pub intersection_nodes: Vec<Node>,
-    pub indexed_ways: std::collections::HashMap<osm::Id, Vec<Way>>,
+    pub nodeways_idx: std::collections::HashMap<i64, Vec<Way>>,
 }
 
 impl StreetNetwork {
@@ -33,14 +29,15 @@ impl StreetNetwork {
         }
 
         let mut node_idx: NodeMap<i64> = NodeMap::new();
-        let mut node_ways_idx: std::collections::HashMap<osm::Id, Vec<Way>> = std::collections::HashMap::new();
+        let mut node_ways_idx: std::collections::HashMap<i64, Vec<Way>> = std::collections::HashMap::new();
 
         let mut c = 0;
-        for (i64, way) in qstreets.iter() {
+        for (_, way) in qstreets.iter() {
             let size = way.nodes.len();
             for i in 0..(size-1) {
-                let mut a: usize = node_idx.get_or_insert(way.nodes[i]);
-                let mut b: usize = node_idx.get_or_insert(way.nodes[i+1]);
+                c += 2;
+                let a = node_idx.get_or_insert(way.nodes[i]);
+                let b = node_idx.get_or_insert(way.nodes[i+1]);
                 let w = rand::random::<u8>();
 
                 graph.add_edge_bidir(a, b, w as usize);
@@ -89,9 +86,38 @@ impl StreetNetwork {
         }
     }
 
-    pub fn serialize(&self, path: &std::path::Path) {
-        let encoded: Vec<u8> = bincode::serialize(&self.inner).unwrap();
-        std::fs::write(path, encoded).unwrap();
+    pub fn serialize(&self) -> Vec<u8> {
+        // let encoded: Vec<u8> = bincode::serialize(&self.inner).unwrap();
+        // std::fs::write(path, encoded).unwrap();
+
+        // let n = bincode::serialize(&self).unwrap();
+
+        // let mut s = flexbuffers::FlexbufferSerializer::new();
+        // let n = monster.serialize(&mut s).unwrap();
+
+        // let mut n = Vec::new();
+        // if let bson::Bson::Document(redacted_bson) = bson::to_bson(&self.inner).unwrap() {
+        //     redacted_bson.to_writer(&mut n);
+        // }
+
+        let n = serde_json::to_string(&self).unwrap().as_bytes().to_vec();
+
+        println!("Serialized size: {}", n.len());
+        n
+    }
+
+    pub fn deserialize(state: Vec<u8>) -> Self {
+        println!("Deserialized size: {}", state.len());
+
+        // bincode::deserialize(&state).unwrap()
+
+        // let r = flexbuffers::Reader::get_root(s.view()).unwrap();
+        // Self::deserialize(r).unwrap()
+
+        // let doc = bson::Document::from_reader(&mut std::io::Cursor::new(&state[..])).unwrap();
+        // bson::from_bson(bson::Bson::Document(doc)).unwrap()
+
+        serde_json::from_str(std::str::from_utf8(&state).unwrap()).unwrap()
     }
 }
 

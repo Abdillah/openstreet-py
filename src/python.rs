@@ -2,6 +2,8 @@
 use std::collections::HashMap;
 
 use pyo3::prelude::*;
+use pyo3::types::{PyTuple, PyBytes};
+use pyo3::exceptions;
 use pyo3::class::iter::{PyIterProtocol, IterNextOutput};
 
 use osm_xml as osm;
@@ -371,23 +373,57 @@ impl Map {
 }
 
 
-#[pyclass(subclass)]
+#[pyclass(subclass, module="openstreet")]
 /// StreetNetwork create graph of street nodes and enable graph ops
 struct StreetNetwork {
-    inner: network::StreetNetwork,
+    inner: Option<network::StreetNetwork>,
 }
 
 #[pymethods]
 impl StreetNetwork {
     #[new]
-    pub fn new(map: Map, street_type: Vec<&str>) -> Self {
-        Self {
-            inner: network::StreetNetwork::new(&map.inner, street_type)
+    #[args(args = "*")]
+    pub fn new(args: &PyTuple) -> Self {
+        match args.len() {
+            0 => StreetNetwork {
+                inner: None,
+            },
+            2 => {
+                let map = args.get_item(0).extract::<Map>().expect("First argument must be a Map");
+                let street_type = args.get_item(1).extract::<Vec<&str>>().expect("Second argument must be a list of highway type");
+
+                Self {
+                    inner: Some(network::StreetNetwork::new(&map.inner, street_type))
+                }
+            }
+            _ => unreachable!(),
         }
     }
 
-    pub fn shortest_path(&mut self, a: i64, b: i64) -> Vec<i64> {
-        self.inner.shortest_path(a, b)
+    pub fn shortest_path(&mut self, a: i64, b: i64) -> PyResult<Vec<i64>> {
+        if let Some(inner) = self.inner.as_mut() {
+            return Ok(inner.shortest_path(a, b));
+        }
+
+        Err(PyErr::new::<exceptions::PyRuntimeError, _>("Has not been initialized"))
+    }
+
+    pub fn __getstate__(&self, py: Python) -> PyResult<PyObject> {
+        if let Some(inner) = self.inner.as_ref() {
+            return Ok(PyBytes::new(py, &inner.serialize()).to_object(py));
+        }
+
+        Err(PyErr::new::<exceptions::PyRuntimeError, _>("Has not been initialized"))
+    }
+
+    fn __setstate__(&mut self, py: Python, state: PyObject) -> PyResult<()> {
+        match state.extract::<&PyBytes>(py) {
+            Ok(s) => {
+                self.inner = Some(network::StreetNetwork::deserialize(s.as_bytes().to_vec()));
+                Ok(())
+            }
+            Err(e) => Err(e),
+        }
     }
 }
 

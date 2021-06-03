@@ -3,12 +3,11 @@
 use osm_xml as osm;
 use std::collections::HashMap;
 use fnv::FnvHashMap;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-use crate::queries;
 use crate::queries::Builder as QueryBuilder;
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 /// OpenStreet Map object
 pub struct Node {
     // inner: osm::Node,
@@ -193,7 +192,7 @@ static RULES: [Rule; 26] =
      }];
 
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 /// OpenStreet Way object
 pub struct Way {
     // inner: osm::Way,
@@ -244,7 +243,7 @@ impl From<&osm::Way> for Way {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize)]
 /// OpenStreet Bounds object
 pub struct Bounds {
     /// Min latitude
