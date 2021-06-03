@@ -63,7 +63,7 @@ impl StreetNetwork {
         Self {
             inner: graph,
             node_idx,
-            indexed_ways: node_ways_idx,
+            nodeways_idx: node_ways_idx,
         }
     }
 

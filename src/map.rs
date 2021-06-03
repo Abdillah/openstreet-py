@@ -20,7 +20,7 @@ pub struct Node {
 impl From<&osm::Node> for Node {
     fn from(node: &osm::Node) -> Self {
         // let node_o = node.clone();
-        let mut tagdict = HashMap::new();
+        let tagdict = HashMap::new();
         Node {
             // inner: node.clone(),
             id: node.id,
@@ -224,7 +224,7 @@ impl Way {
 impl From<&osm::Way> for Way {
     fn from(way: &osm::Way) -> Self {
         let way_o = way.clone();
-        let mut tagdict = HashMap::new();
+        let tagdict = HashMap::new();
 
         Way {
             // inner: way.clone(),
