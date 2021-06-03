@@ -30,5 +30,25 @@ fn main() {
     ]);
 
     let path: &Path = Path::new(&outpath);
-    gra.serialize(path);
+
+    // let gra4 = StreetNetwork {
+    //     inner: fast_paths::InputGraph::new(),
+    //     node_idx: openstreet::structure::NodeMap::new(),
+    //     nodeways_idx: std::collections::HashMap::new(),
+    // };
+
+    // Serialize it to a JSON string.
+    let bytes = serde_json::to_string(&gra).unwrap();
+    fs::write(path, bytes);
+
+    // let gra5: StreetNetwork = serde_json::from_str(std::str::from_utf8(&bytes2).unwrap()).unwrap();
+
+
+    // let bytes = gra4.serialize();
+    // fs::write(path, bytes);
+
+    let bytes2 = fs::read(path).expect("File read failed");
+    // let mut gra2: StreetNetwork = serde_json::from_str(std::str::from_utf8(&bytes2).unwrap()).unwrap();
+    let mut gra2 = StreetNetwork::deserialize(bytes2);
+    println!("{:?}", gra2.shortest_path(4137262376, 4137262384));
 }
