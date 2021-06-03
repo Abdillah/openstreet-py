@@ -1,0 +1,16 @@
+name: telegram
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: avkviring/telegram-github-action@v0.0.13
+      env:
+        telegram_to: ${{ secrets.TELEGRAM_TO }}
+        telegram_token: ${{ secrets.TELEGRAM_SECRET }}
+        event: ${{ toJson(github.event) }}
