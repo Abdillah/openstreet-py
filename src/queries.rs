@@ -1,10 +1,12 @@
 /* query.rs */
+use std::fmt::Debug;
+
 use osm_xml as osm;
 
 use crate::map;
 use crate::map::TaggableElement;
 
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum FilterQuery {
     // Non-lazy filter already O(1)
     // ById(i64),

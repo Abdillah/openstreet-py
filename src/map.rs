@@ -1,13 +1,15 @@
 /* Map */
 
-use osm_xml as osm;
+use std::fmt::Debug;
 use std::collections::HashMap;
+
+use osm_xml as osm;
 use fnv::FnvHashMap;
 use serde::{Serialize, Deserialize};
 
 use crate::queries::Builder as QueryBuilder;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 /// OpenStreet Map object
 pub struct Node {
     // inner: osm::Node,
@@ -192,7 +194,7 @@ static RULES: [Rule; 26] =
      }];
 
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 /// OpenStreet Way object
 pub struct Way {
     // inner: osm::Way,
