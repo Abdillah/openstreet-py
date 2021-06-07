@@ -1,12 +1,12 @@
-name: nightly
+name: alpha
 
 on:
   push:
     tags:
-      - 'v*-nightly.*'
+      - 'v*-alpha.*'
 
 jobs:
-  nightly-release:
+  alpha-release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: true
-        title: "Nightly build ${{ env.CURRENT_TAG }}"
+        title: "Alpha build ${{ env.CURRENT_TAG }}"
         files: |
           dist/openstreet-*-*-linux_x86_64.whl
     - name: Build sphinx
