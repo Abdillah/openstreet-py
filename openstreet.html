@@ -1,0 +1,505 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>openstreet package &mdash; openstreet alpha documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/patch.css" type="text/css" />
+  <link rel="stylesheet" href="https://assets.readthedocs.org/static/css/badge_only.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Reference and API" href="modules.html" /> 
+
+<!-- RTD Extra Head -->
+
+<link rel="stylesheet" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="application/json" id="READTHEDOCS_DATA">{"ad_free": "", "api_host": "", "build_date": "2021-06-07T02:37:05Z", "builder": "sphinx", "canonical_url": "", "commit": "", "docroot": "", "features": {"docsearch_disabled": false}, "global_analytics_code": null, "language": "", "page": "openstreet", "programming_language": "", "project": "", "source_suffix": ".rst", "subprojects": {}, "theme": "", "user_analytics_code": null, "version": ""}</script>
+
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
+<script type="text/javascript">
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
+</script>
+
+<script type="text/javascript" src="https://assets.readthedocs.org/static/javascript/readthedocs-analytics.js" async="async"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> openstreet
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Reference and API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">openstreet package</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">openstreet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">Reference and API</a> &raquo;</li>
+        
+      <li>openstreet package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/openstreet.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-openstreet">
+<span id="openstreet-package"></span><h1>openstreet package<a class="headerlink" href="#module-openstreet" title="Permalink to this headline">¶</a></h1>
+<p>OpenStreet map with advanced graph functionality built in.</p>
+<dl class="class">
+<dt id="openstreet.Map">
+<em class="property">class </em><code class="sig-prename descclassname">openstreet.</code><code class="sig-name descname">Map</code><a class="headerlink" href="#openstreet.Map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Map provide parsing and storage for OSM format</p>
+<p>Map contains three main information: nodes, ways, and bounds.
+For ways and nodes, both must be accessed using query style
+or fluent interface.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="nb">map</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="s2">&quot;/path/to/map.osm&quot;</span><span class="p">)</span>
+<span class="n">streets</span> <span class="o">=</span> <span class="nb">map</span><span class="o">.</span><span class="n">ways</span><span class="p">()</span><span class="o">.</span><span class="n">where_tag_in</span><span class="p">(</span><span class="s2">&quot;highstreet&quot;</span><span class="p">,</span> <span class="p">[</span> <span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="s2">&quot;secondary&quot;</span> <span class="p">])</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+<p>Tag is an element in OSM format looked like these:
+<code class="docutils literal notranslate"><span class="pre">&lt;tag</span> <span class="pre">key=&quot;akeyhere&quot;</span> <span class="pre">value=&quot;somevalue&quot;</span> <span class="pre">/&gt;</span></code>. So using the <code class="docutils literal notranslate"><span class="pre">by_tag_in</span></code> filter
+would means looping over all the ways in the OSM with the matching tag “highstreet”
+and value of “primary” or “secondary”.</p>
+<dl class="method">
+<dt id="openstreet.Map.bounds">
+<code class="sig-name descname">bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.Map.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Bounds object of the map</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.Map.nodes">
+<code class="sig-name descname">nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.Map.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return query builder to filter ways collection</p>
+<p>Refer to NodeQueryBuilder methods for available filters.
+Call <a class="reference internal" href="#openstreet.NodeQueryBuilder.get" title="openstreet.NodeQueryBuilder.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">NodeQueryBuilder.get()</span></code></a> when done to retrieve the result.
+See <a class="reference internal" href="#openstreet.Map" title="openstreet.Map"><code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code></a> documentation for example.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.Map.ways">
+<code class="sig-name descname">ways</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.Map.ways" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return query builder to filter ways collection</p>
+<p>Refer to WayQueryBuilder methods for available filters.
+Call <a class="reference internal" href="#openstreet.WayQueryBuilder.get" title="openstreet.WayQueryBuilder.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">WayQueryBuilder.get()</span></code></a> when done to retrieve the result.
+See <a class="reference internal" href="#openstreet.Map" title="openstreet.Map"><code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code></a> documentation for example.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="openstreet.Way">
+<em class="property">class </em><code class="sig-prename descclassname">openstreet.</code><code class="sig-name descname">Way</code><a class="headerlink" href="#openstreet.Way" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>OpenStreet Way object</p>
+<dl class="attribute">
+<dt id="openstreet.Way.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#openstreet.Way.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A numeric Id</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.Way.is_area">
+<code class="sig-name descname">is_area</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.Way.is_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether it is a closed polygon (area) or not</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Way.nodes">
+<code class="sig-name descname">nodes</code><a class="headerlink" href="#openstreet.Way.nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A List of Node IDs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Way.tags">
+<code class="sig-name descname">tags</code><a class="headerlink" href="#openstreet.Way.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Dictionary of tag key and value</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="openstreet.Node">
+<em class="property">class </em><code class="sig-prename descclassname">openstreet.</code><code class="sig-name descname">Node</code><a class="headerlink" href="#openstreet.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>OpenStreet Map object</p>
+<dl class="attribute">
+<dt id="openstreet.Node.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#openstreet.Node.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A numeric Id</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Node.lat">
+<code class="sig-name descname">lat</code><a class="headerlink" href="#openstreet.Node.lat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Latitude</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Node.lon">
+<code class="sig-name descname">lon</code><a class="headerlink" href="#openstreet.Node.lon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Longitude</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Node.tags">
+<code class="sig-name descname">tags</code><a class="headerlink" href="#openstreet.Node.tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Dictionary of tag key and value</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="openstreet.Bounds">
+<em class="property">class </em><code class="sig-prename descclassname">openstreet.</code><code class="sig-name descname">Bounds</code><a class="headerlink" href="#openstreet.Bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>OpenStreet Bounds object</p>
+<dl class="attribute">
+<dt id="openstreet.Bounds.maxlat">
+<code class="sig-name descname">maxlat</code><a class="headerlink" href="#openstreet.Bounds.maxlat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Max latitude</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Bounds.maxlon">
+<code class="sig-name descname">maxlon</code><a class="headerlink" href="#openstreet.Bounds.maxlon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Max longitude</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Bounds.minlat">
+<code class="sig-name descname">minlat</code><a class="headerlink" href="#openstreet.Bounds.minlat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min latitude</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openstreet.Bounds.minlon">
+<code class="sig-name descname">minlon</code><a class="headerlink" href="#openstreet.Bounds.minlon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min longitude</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="openstreet.WayQueryBuilder">
+<em class="property">class </em><code class="sig-prename descclassname">openstreet.</code><code class="sig-name descname">WayQueryBuilder</code><a class="headerlink" href="#openstreet.WayQueryBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Object that save filtering operations</p>
+<dl class="method">
+<dt id="openstreet.WayQueryBuilder.by_id">
+<code class="sig-name descname">by_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.WayQueryBuilder.by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns Node with given <code class="docutils literal notranslate"><span class="pre">id</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.WayQueryBuilder.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.WayQueryBuilder.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the filtered Way list</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.WayQueryBuilder.where_contain_nodes">
+<code class="sig-name descname">where_contain_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.WayQueryBuilder.where_contain_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter Way that contains nodes <code class="docutils literal notranslate"><span class="pre">nodes</span></code></p>
+<p>See <a class="reference internal" href="#openstreet.Map" title="openstreet.Map"><code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code></a> documentation for usage example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>nodes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of node ids.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.WayQueryBuilder.where_tag_eq">
+<code class="sig-name descname">where_tag_eq</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.WayQueryBuilder.where_tag_eq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter Way with tag of key <code class="docutils literal notranslate"><span class="pre">key</span></code> equal <code class="docutils literal notranslate"><span class="pre">value</span></code></p>
+<p>See <a class="reference internal" href="#openstreet.Map" title="openstreet.Map"><code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code></a> documentation for usage example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – Key name of the tags.</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – A tag value to filter.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.WayQueryBuilder.where_tag_in">
+<code class="sig-name descname">where_tag_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.WayQueryBuilder.where_tag_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter Way with tag of key <code class="docutils literal notranslate"><span class="pre">key</span></code> that contains one of <code class="docutils literal notranslate"><span class="pre">values</span></code></p>
+<p>See <a class="reference internal" href="#openstreet.Map" title="openstreet.Map"><code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code></a> documentation for usage example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – Key name of the tags.</p></li>
+<li><p><strong>values</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Possible tag values to include.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="openstreet.NodeQueryBuilder">
+<em class="property">class </em><code class="sig-prename descclassname">openstreet.</code><code class="sig-name descname">NodeQueryBuilder</code><a class="headerlink" href="#openstreet.NodeQueryBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Object that save filtering operations</p>
+<dl class="method">
+<dt id="openstreet.NodeQueryBuilder.by_id">
+<code class="sig-name descname">by_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.NodeQueryBuilder.by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns Node with given <code class="docutils literal notranslate"><span class="pre">id</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.NodeQueryBuilder.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.NodeQueryBuilder.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the filtered Node list</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.NodeQueryBuilder.where_tag_eq">
+<code class="sig-name descname">where_tag_eq</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.NodeQueryBuilder.where_tag_eq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter Node with tag of key <code class="docutils literal notranslate"><span class="pre">key</span></code> equal <code class="docutils literal notranslate"><span class="pre">value</span></code></p>
+<p>See <a class="reference internal" href="#openstreet.Map" title="openstreet.Map"><code class="xref py py-class docutils literal notranslate"><span class="pre">Map</span></code></a> documentation for usage example.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – Key name of the tags.</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – A tag value to filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#openstreet.NodeQueryBuilder" title="openstreet.NodeQueryBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeQueryBuilder</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openstreet.NodeQueryBuilder.where_tag_in">
+<code class="sig-name descname">where_tag_in</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.NodeQueryBuilder.where_tag_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter Node with tag of key <code class="docutils literal notranslate"><span class="pre">key</span></code> that contains one of <code class="docutils literal notranslate"><span class="pre">values</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – Key name of the tags.</p></li>
+<li><p><strong>values</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Possible tag values to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#openstreet.NodeQueryBuilder" title="openstreet.NodeQueryBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeQueryBuilder</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="openstreet.StreetNetwork">
+<em class="property">class </em><code class="sig-prename descclassname">openstreet.</code><code class="sig-name descname">StreetNetwork</code><a class="headerlink" href="#openstreet.StreetNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>StreetNetwork create graph of street nodes and enable graph ops</p>
+<dl class="method">
+<dt id="openstreet.StreetNetwork.shortest_path">
+<code class="sig-name descname">shortest_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openstreet.StreetNetwork.shortest_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-left" title="Reference and API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Hernawan Fa&#39;iz Abdillah.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
