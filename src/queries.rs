@@ -87,26 +87,33 @@ pub trait QueryBuilder<T> {
     fn by_id(&self, id: i64) -> T;
 }
 
-trait BuilderIterator: std::iter::IntoIterator + Clone {}
-
 // #[derive(Clone)]
 pub struct BuilderIter<T> where T: Clone {
     // iter: dyn std::iter::IntoIterator<Item = (i64, T), IntoIter = std::collections::hash_map::IntoIter<i64, T>>,
     into_iter: std::collections::hash_map::IntoIter<i64, T>,
     // iter: std::collections::hash_map::Iter<'a, osm::Id, T>,
+    conditions: Vec<FilterQuery>,
 }
 
 impl<'a, T: Clone> BuilderIter<T> {
-    fn new(into_iter: std::collections::hash_map::IntoIter<i64, T>) -> Self {
-        BuilderIter { into_iter }
+    fn new(into_iter: std::collections::hash_map::IntoIter<i64, T>, conditions: Vec<FilterQuery>) -> Self {
+        BuilderIter { into_iter, conditions }
     }
 }
 
-impl<'a, T: Clone> Iterator for BuilderIter<T> {
+impl<'a, T: TaggableElement + Debug + Clone> Iterator for BuilderIter<T>
+where
+    FilterQuery: Filter<T>
+{
     type Item = (osm::Id, T);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.into_iter.next().map(|(id, n)| (id, n))
+        while let Some((k, v)) = self.into_iter.next() {
+            if self.conditions.iter().all(|c| c.filter(v.clone())) {
+                return Some((k, v));
+            }
+        }
+        return None;
     }
 }
 
@@ -127,7 +134,8 @@ impl<T: Clone> Builder<T> {
 
     pub fn iter(&self) -> BuilderIter<T> {
         let storage = (*self.storage).clone();
-        BuilderIter::new(storage.into_iter())
+        let conditions = self.conditions.clone();
+        BuilderIter::new(storage.into_iter(), conditions)
     }
 
     fn filters(&self) -> Vec<FilterQuery> {
