@@ -13,22 +13,22 @@ def example_get(map):
     print(map.nodes().by_id(8623725793))
 
     ctr = 5
-    for node in map.nodes().where_tag_in("highway", [ "primary" ]).get():
+    for way in map.ways().where_tag_in("highway", [ "primary" ]).get():
         if ctr == 0:
             break;
 
-        print("Node id:", node.id)
-        print("- ", node.tags)
+        print("Ways id:", way.id)
+        print("- ", way.tags)
 
         ctr = ctr - 1
 
 def example_iterator(map):
     ctr = 5
-    for node in map.nodes().where_tag_in("highway", [ "primary" ]):
+    for way in map.ways().where_tag_in("highway", [ "primary" ]):
         if ctr == 0:
             break;
 
-        print("Node id:", node.id)
+        print("Ways id:", way.id)
 
         ctr = ctr - 1
 
