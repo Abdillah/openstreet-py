@@ -31,6 +31,8 @@ impl StreetNetwork {
         let mut node_idx: NodeMap<i64> = NodeMap::new();
         let mut node_ways_idx: std::collections::HashMap<i64, Vec<Way>> = std::collections::HashMap::new();
 
+        let mut qnodes = map.nodes();
+
         let mut c = 0;
         for (_, way) in qstreets.iter() {
             let size = way.nodes.len();
@@ -38,7 +40,10 @@ impl StreetNetwork {
                 c += 2;
                 let a = node_idx.get_or_insert(way.nodes[i]);
                 let b = node_idx.get_or_insert(way.nodes[i+1]);
-                let w = rand::random::<u8>();
+
+                let node_a = qnodes.by_id(way.nodes[i]);
+                let node_b = qnodes.by_id(way.nodes[i+1]);
+                let w = ((node_a.lat - node_b.lat).powi(2) + (node_a.lon - node_b.lon as f64).powi(2)).sqrt() * 111_120.0;
 
                 graph.add_edge_bidir(a, b, w as usize);
                 // println!("Add edge {}/{} <-({})-> {}/{}", a, way.nodes[i], w, b, way.nodes[i+1])
