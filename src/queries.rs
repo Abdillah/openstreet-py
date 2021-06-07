@@ -27,11 +27,11 @@ impl Filter<map::Node> for FilterQuery {
         match self {
             Self::ByTag(k, values) => {
                 if let Some(val) = item.get_tag_value(k) {
-                    if !values.contains(&val.to_owned()) {
-                        return false;
+                    if values.contains(&val.to_owned()) {
+                        return true;
                     }
                 }
-                return true;
+                return false;
             },
             _ => panic!("You're using exclusive filter on wrong type")
         }
@@ -43,11 +43,11 @@ impl Filter<map::Way> for FilterQuery {
         match self {
             Self::ByTag(k, values) => {
                 if let Some(val) = item.get_tag_value(k) {
-                    if !values.contains(&val.to_owned()) {
-                        return false;
+                    if values.contains(&val.to_owned()) {
+                        return true;
                     }
                 }
-                return true;
+                return false;
             },
             Self::IsPolygon => item.is_polygon(),
             Self::HasNodes(node_ids) => {
