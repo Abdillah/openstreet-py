@@ -213,33 +213,6 @@ mod test {
     use crate::queries::QueryBuilder;
 
     #[test]
-    fn test_by_multiple_tag() {
-        let f = std::fs::File::open("resources/madina.osm").unwrap();
-        let doc = osm::OSM::parse(f).unwrap();
-
-        let mut hm: fnv::FnvHashMap<i64, crate::map::Way> = fnv::FnvHashMap::default();
-        for (key, value) in doc.ways.iter() {
-            hm.insert(*key, value.into());
-        }
-
-        let mut qstreets: Builder<crate::map::Way> = Builder::new(hm)
-        .by_tag_in("highway", vec![
-            "primary"      , "secondary"      , "tertiary",
-            "primary_link" , "secondary_link" , "tertiary_link",
-            "residential"  , "service"
-        ]);
-
-        std::assert!(
-            FilterQuery::ByTag("highway".to_string(), vec![
-                "primary"      , "secondary"      , "tertiary",
-                "primary_link" , "secondary_link" , "tertiary_link",
-                "residential"  , "service"
-            ].iter().map(|s| s.to_string()).collect::<Vec<String>>())
-            == qstreets.filters().first().unwrap().clone()
-        );
-    }
-
-    #[test]
     fn test_iter() {
         let f = std::fs::File::open("resources/madina.osm").unwrap();
         let doc = osm::OSM::parse(f).unwrap();
@@ -258,5 +231,43 @@ mod test {
 
         let mut iter = qstreets.iter();
         assert!(iter.next().is_some());
+    }
+
+    #[test]
+    fn test_by_multiple_tag() {
+        let f = std::fs::File::open("resources/madina.osm").unwrap();
+        let doc = osm::OSM::parse(f).unwrap();
+
+        let mut hm: fnv::FnvHashMap<i64, crate::map::Way> = fnv::FnvHashMap::default();
+        for (key, value) in doc.ways.iter() {
+            hm.insert(*key, value.into());
+        }
+
+        let highway_filter = vec![
+            "primary"      , "secondary"      , "tertiary",
+            "primary_link" , "secondary_link" , "tertiary_link",
+            "residential"  , "service"
+        ];
+
+        let mut qstreets: Builder<crate::map::Way> = Builder::new(hm.clone())
+        .by_tag_in("highway", vec![
+            "primary"      , "secondary"      , "tertiary",
+            "primary_link" , "secondary_link" , "tertiary_link",
+            "residential"  , "service"
+        ]);
+
+        std::assert!(
+            FilterQuery::ByTag("highway".to_string(), vec![
+                "primary"      , "secondary"      , "tertiary",
+                "primary_link" , "secondary_link" , "tertiary_link",
+                "residential"  , "service"
+            ].iter().map(|s| s.to_string()).collect::<Vec<String>>())
+            == qstreets.filters().first().unwrap().clone()
+        );
+
+        qstreets.iter().for_each(|(k, v)| {
+            let tagval = v.tags.get("highway").map(|s| s.clone()).unwrap_or("".to_owned());
+            assert!(highway_filter.contains(&tagval.as_str()));
+        });
     }
 }

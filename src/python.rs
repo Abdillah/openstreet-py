@@ -374,7 +374,9 @@ impl Map {
 
 
 #[pyclass(subclass, module="openstreet")]
-/// StreetNetwork create graph of street nodes and enable graph ops
+/// StreetNetwork create graph of street nodes and enable graph operation
+///
+/// Operation currently supported is shortest path.
 struct StreetNetwork {
     inner: Option<network::StreetNetwork>,
 }
@@ -400,6 +402,10 @@ impl StreetNetwork {
         }
     }
 
+    /// Returns Node Id list from @param{a} to @param{b}
+    ///
+    /// The returned array may be empty if there is no possible
+    /// route from @param{a} to @param{b}.
     pub fn shortest_path(&mut self, a: i64, b: i64) -> PyResult<Vec<i64>> {
         if let Some(inner) = self.inner.as_mut() {
             return Ok(inner.shortest_path(a, b));

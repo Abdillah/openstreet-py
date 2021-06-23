@@ -17,8 +17,8 @@ pub struct StreetNetwork {
 
 impl StreetNetwork {
     pub fn new(map: &map::Map, street_types: Vec<&str>) -> Self {
-        println!("Creating StreetNetwork!");
-        println!("- Constraints: {:?}", street_types);
+        // println!("Creating StreetNetwork!");
+        // println!("- Constraints: {:?}", street_types);
 
         let mut graph = fast_paths::InputGraph::new();
         let mut qstreets = map.ways();
