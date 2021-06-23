@@ -1,6 +1,4 @@
 /* network.rs */
-extern crate serde;
-use rand;
 use serde::{Serialize, Deserialize};
 
 use crate::queries::QueryBuilder;
